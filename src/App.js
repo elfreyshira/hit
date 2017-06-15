@@ -1,18 +1,37 @@
 import React, { Component } from 'react';
 import logo from './logo.svg';
+
+import Landing from  './components/Landing'
+import Lobby from  './components/Lobby'
+
+import getRoomID from './util/getRoomID'
+
 import './App.css';
 
 class App extends Component {
+  state = {
+    room: getRoomID(),
+    status: '',
+    player: ''
+  }
+  componentDidMount = () => {
+    if (!this.state.room) {
+      this.setState({status: 'landing'})
+    }
+    else {
+      this.setState({status: 'lobby'})
+    }
+  }
+
+  onJoinGame = (playerId) => {
+    this.setState({player: playerId})
+  }
+
   render() {
     return (
-      <div className="App">
-        <div className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <h2>Welcome to React</h2>
-        </div>
-        <p className="App-intro">
-          To get started, edit <code>src/App.js</code> and save to reload.
-        </p>
+      <div className="">
+        {this.state.status === 'landing' ? <Landing/> : null}
+        {this.state.status === 'lobby' ? <Lobby onJoinGame={this.onJoinGame} appState={this.state} /> : null}
       </div>
     );
   }
