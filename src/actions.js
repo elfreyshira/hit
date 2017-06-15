@@ -15,6 +15,13 @@ firebase.initializeApp(config)
 
 global.firebase = firebase
 
+// window.addEventListener("beforeunload", function(event) {
+//   const roomID = getRoomID()
+//   if (roomID) {
+//     fb('rooms', getRoomID()).remove()
+//   }
+// });
+
 
 function create4CharacterID () {
   return _.random(46656, 1679615).toString(36).toUpperCase().replace('I', 'X')
@@ -122,8 +129,8 @@ const ACTIONS = {
 async function addPlayer (payload) {
   const {name} = payload
   const playerId = create4CharacterID()
-  
-  await fb('rooms', getRoomID(), 'players', playerId).set({name})
+
+  await fb('rooms', getRoomID(), 'players', playerId, 'name').set(name)
   return playerId
 }
 global.addPlayer = addPlayer

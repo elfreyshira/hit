@@ -11,10 +11,11 @@ class Lobby extends Component {
     appState: React.PropTypes.object,
   }
 
-  onJoinGame = (evt) => {
+  onJoinGame = async (evt) => {
+    evt.preventDefault()
     const name = this.refs.name.value
-    actions.joinGame(name).then(this.props.onJoinGame)
-    return false
+    const playerId = await actions.joinGame(name)
+    this.props.onJoinGame(playerId)
   }
 
   renderJoinForm = () => {
