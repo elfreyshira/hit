@@ -1,4 +1,6 @@
 import React, { Component } from 'react';
+import _ from 'lodash'
+
 import actions from '../../actions'
 
 import Button from '../Button'
@@ -18,13 +20,27 @@ class Lobby extends Component {
     this.props.onJoinGame(playerId)
   }
 
+  renderPlayerList = () => {
+    if (!_.isEmpty(this.props, 'appState.gameState.players')) {
+      return (
+        <div>
+          <hr/>
+          <h4>Players joined</h4>
+          <ul>
+            {_.map(this.props.appState.gameState.players, (playerObj) => {
+              return <li>{playerObj.name}</li>
+            })}
+          </ul>
+        </div>
+      )
+    }
+  }
+
   renderJoinForm = () => {
-    console.log('this.props.appState.player')
-    console.log(this.props.appState.player)
-    console.log(!!this.props.appState.player)
     if (!this.props.appState.player) {
       return (
         <form onSubmit={this.onJoinGame}>
+          <hr/>
           <label>
             Enter your name (make sure others will recognize it's you): &nbsp;
             <input type="text" placeholder="Name" ref="name" />
@@ -35,12 +51,24 @@ class Lobby extends Component {
     }
   }
 
+  renderReadyButton () {
+    if (this.props.appState.player) {
+      return (
+        <div>
+          <hr/>
+          <Button onClick={actions.startGame}>Everybody is ready</Button>
+        </div>
+      )
+    }
+  }
+
   render () {
     return (
       <div>
         <IntroHeader/>
         {this.renderJoinForm()}
-        <Button>Everybody is ready</Button>
+        {this.renderPlayerList()}
+        {this.renderReadyButton()}
       </div>
     );
   }

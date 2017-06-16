@@ -13,7 +13,6 @@ var config = {
 };
 firebase.initializeApp(config)
 
-global.firebase = firebase
 
 // window.addEventListener("beforeunload", function(event) {
 //   const roomID = getRoomID()
@@ -133,7 +132,6 @@ async function addPlayer (payload) {
   await fb('rooms', getRoomID(), 'players', playerId, 'name').set(name)
   return playerId
 }
-global.addPlayer = addPlayer
 
 async function setupPlayer (payload) {
   const {playerId, profession, team} = payload
@@ -146,7 +144,6 @@ async function setupPlayer (payload) {
     team
   })
 }
-global.setupPlayer = setupPlayer
 
 async function joinGame (name) {
   return await addPlayer({name})
@@ -164,7 +161,6 @@ async function queueAction (payload) {
     actionName
   })
 }
-global.queueAction = queueAction
 
 async function performAllActions () {
   const roomID = getRoomID()
@@ -184,7 +180,6 @@ async function performAllActions () {
 
   fb('rooms', roomID, 'players').update(playersState)
 }
-global.performAllActions = performAllActions
 
 
 async function nextTurn () {
@@ -197,12 +192,17 @@ async function nextTurn () {
     }
   })
 }
-global.nextTurn = nextTurn
 
 async function createNewGame () {
   const newRoomID = create4CharacterID()
   window.location.hash = 'room=' + newRoomID //+ '&first=true';
   window.location.reload();
+}
+
+function onGameStateChange (callback) {
+  fb('rooms', getRoomID()).on('value', (snapshot) => {
+    callback(snapshot.val())
+  })
 }
 
 const gameState = {
@@ -236,5 +236,6 @@ const gameState = {
 
 export default {
   createNewGame,
-  joinGame
+  joinGame,
+  onGameStateChange
 }

@@ -5,6 +5,7 @@ import Landing from  './components/Landing'
 import Lobby from  './components/Lobby'
 
 import getRoomID from './util/getRoomID'
+import actions from './actions'
 
 import './App.css';
 
@@ -13,7 +14,8 @@ class App extends Component {
   state = {
     room: getRoomID(),
     status: '',
-    player: ''
+    player: '',
+    gameState: {}
   }
   componentDidMount = () => {
     if (!this.state.room) {
@@ -21,6 +23,7 @@ class App extends Component {
     }
     else {
       this.setState({status: 'lobby'})
+      actions.onGameStateChange((gameState) => this.setState({gameState}))
     }
   }
 
