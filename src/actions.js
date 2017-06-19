@@ -2,6 +2,8 @@ import firebase from 'firebase'
 import _ from 'lodash'
 
 import getRoomID from './util/getRoomID'
+import { PROFESSIONS, SKILLS } from './util/professions'
+
 
 var config = {
   apiKey: "AIzaSyBQhxIPIgzp236kPKFRt6AqrB69tE9I3YM",
@@ -21,170 +23,81 @@ firebase.initializeApp(config)
 //   }
 // });
 
-
+const possibleCharacters = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'.split('')
 function create4CharacterID () {
-  return _.random(46656, 1679615).toString(36).toUpperCase().replace('I', 'X')
+  return _.times(4, _.partial(_.sample, possibleCharacters)).join('')
 }
 function fb (/* args */) {
-  return firebase.database().ref(_.toArray(arguments).join('/'))
-}
-
-// health ranges from 10 - 20, depending on power of profession action
-// hit filter: hits are checked to adjust damage to the player
-// turn filter: events that happen after all actions are performed
-const PROFESSIONS = {
-  TANK_HEALTH: {
-    startingHealth: 20,
-    possibleActions: ['HIT_2']
-  },
-  TANK_ARMOR: {
-    startingHealth: 14,
-    possibleActions: ['HIT_2'],
-    hitFilter: 'NO_MORE_THAN_2'
-  },
-  TANK_SQUISHY: {
-    startingHealth: 10,
-    possibleActions: ['HIT_2'],
-    hitFilter: 'NO_DAMAGE_IF_2_OR_LESS'
-  },
-  TANK_AUTO_HEAL: {
-    startingHealth: 12,
-    possibleActions: ['HIT_2'],
-    turnFilter: 'HEAL_BY_1'
-  },
-  ASSASSIN_NORMAL_LOW: {
-    startingHealth: 13,
-    possibleActions: ['HIT_2', 'HIT_3']
-  },
-  ASSASSIN_NORMAL_HIGH: {
-    startingHealth: 10,
-    possibleActions: ['HIT_2', 'HIT_4']
-  },
-  SUPPORT_HEAL_NORMAL_LOW: {
-    startingHealth: 16,
-    possibleActions: ['HIT_2', 'HEAL_2']
-  },
-  SUPPORT_HEAL_NORMAL_MED: {
-    startingHealth: 13,
-    possibleActions: ['HIT_2', 'HEAL_3']
-  },
-  SUPPORT_HEAL_NORMAL_HIGH: {
-    startingHealth: 10,
-    possibleActions: ['HIT_2', 'HEAL_4']
-  }
-}
-
-const ACTIONS = {
-  HIT_2: {
-    priority: 2,
-    doAction (playersState, payload) {
-      const {player, target} = payload
-      playersState[target].health = playersState[target].health - 2
-    }
-  },
-  HIT_3: {
-    priority: 2,
-    doAction (playersState, payload) {
-      const {player, target} = payload
-      playersState[target].health = playersState[target].health - 3
-    }
-  },
-  HIT_4: {
-    priority: 2,
-    doAction (playersState, payload) {
-      const {player, target} = payload
-      playersState[target].health = playersState[target].health - 4
-    }
-  },
-  HEAL_2: {
-    priority: 3,
-    doAction (playersState, payload) {
-      const {player, target} = payload
-      const healedHealth = playersState[target].health + 2
-      const maxHealth = playersState[target].maxHealth
-      playersState[target].health = Math.min(healedHealth, maxHealth)
-    }
-  },
-  HEAL_3: {
-    priority: 3,
-    doAction (playersState, payload) {
-      const {player, target} = payload
-      const healedHealth = playersState[target].health + 3
-      const maxHealth = playersState[target].maxHealth
-      playersState[target].health = Math.min(healedHealth, maxHealth)
-    }
-  },
-  HEAL_4: {
-    priority: 3,
-    doAction (playersState, payload) {
-      const {player, target} = payload
-      const healedHealth = playersState[target].health + 4
-      const maxHealth = playersState[target].maxHealth
-      playersState[target].health = Math.min(healedHealth, maxHealth)
-    }
-  }
+  return firebase.database().ref('rooms/' + getRoomID() + '/' + _.toArray(arguments).join('/'))
 }
 
 async function addPlayer (payload) {
   const {name} = payload
   const playerId = create4CharacterID()
 
-  await fb('rooms', getRoomID(), 'players', playerId, 'name').set(name)
+  await fb('players', playerId, 'name').set(name)
   return playerId
-}
-
-async function setupPlayer (payload) {
-  const {playerId, profession, team} = payload
-  const startingHealth = PROFESSIONS[profession].startingHealth
-
-  await fb('rooms', getRoomID(), 'players', playerId).update({
-    health: startingHealth,
-    maxHealth: startingHealth,
-    profession,
-    team
-  })
 }
 
 async function joinGame (name) {
   return await addPlayer({name})
 }
 
-async function queueAction (payload) {
-  const {player, target, actionName} = payload
-  const roomID = getRoomID()
-  const currentTurn = (await fb('rooms', roomID, 'turns', 'currentTurn').once('value')).val()
-  // const currentTurn = currentTurnSnapshot.val()
+async function queueSkill (payload) {
+  const {player, target, skill} = payload
+  let currentTurn = (await fb('turns', 'currentTurn').once('value')).val()
 
-  await fb('rooms', roomID, 'turns', 'turn' + currentTurn).push({
+  if (!currentTurn) {
+    currentTurn = 1
+    await fb('turns/currentTurn').set(currentTurn)
+  }
+
+  await fb('meta/turn/playersWaiting').transaction((playersWaiting) => {
+    if (_.isNumber(playersWaiting)) {
+      return playersWaiting + 1
+    }
+    else {
+      return 0
+    }
+  })
+
+  await fb('turns', 'turn' + currentTurn).push({
     player,
     target,
-    actionName
+    skill
   })
+
+  const {playersAlive, playersWaiting} = (await fb('meta/turn').once('value')).val()
+  if (playersAlive === playersWaiting) {
+    performAllSkills()
+  }
+
+  
 }
 
-async function performAllActions () {
-  const roomID = getRoomID()
-  const currentTurn = (await fb('rooms', roomID, 'turns', 'currentTurn').once('value')).val()
-  const allActions = (await fb('rooms', roomID, 'turns', 'turn' + currentTurn).once('value')).val()
+async function performAllSkills () {
+  const currentTurn = (await fb('turns', 'currentTurn').once('value')).val()
+  const queuedSkills = (await fb('turns', 'turn' + currentTurn).once('value')).val()
   
-  const actionsByPriority = _.chain(allActions)
+  const skillsByPriority = _.chain(queuedSkills)
     .values()
-    .sortBy((action) => ACTIONS[action.actionName].priority)
+    .sortBy((skillObj) => SKILLS[skillObj.skill].priority)
     .valueOf()
 
-  const playersState = (await fb('rooms', roomID, 'players').once('value')).val()
+  const playersState = (await fb('players').once('value')).val()
 
-  _.forEach(actionsByPriority, (action) => {
-    ACTIONS[action.actionName].doAction(playersState, action)
+  _.forEach(skillsByPriority, (skillObj) => {
+    SKILLS[skillObj.skill].doSkill(playersState, skillObj)
   })
 
-  fb('rooms', roomID, 'players').update(playersState)
+  fb('players').update(playersState)
 }
+global.performAllSkills = performAllSkills
 
 
 async function nextTurn () {
-  await fb('rooms', getRoomID(), 'turns', 'currentTurn').transaction((currentTurn) => {
-    if (currentTurn) {
+  await fb('turns', 'currentTurn').transaction((currentTurn) => {
+    if (_.isNumber(currentTurn)) {
       return currentTurn + 1
     }
     else {
@@ -200,12 +113,43 @@ async function createNewGame () {
 }
 
 function onGameStateChange (callback) {
-  fb('rooms', getRoomID()).on('value', (snapshot) => {
+  fb().on('value', (snapshot) => {
     callback(snapshot.val())
   })
 }
 
+global.fb = fb
+
+async function startGame () {
+  const playersState = (await fb('players').once('value')).val()
+
+  // assigning a profession to each player
+  const shuffledProfessionKeys = _.chain(PROFESSIONS).keys().shuffle().valueOf()
+  let index = 0
+  _.forEach(playersState, (playerObj, playerId) => {
+    const playerProfessionKey = shuffledProfessionKeys[index++]
+    playerObj.profession = playerProfessionKey
+    playerObj.maxHealth = PROFESSIONS[playerProfessionKey].startingHealth
+    playerObj.health = PROFESSIONS[playerProfessionKey].startingHealth
+  })
+
+  await fb('meta/turn').set({
+    playersAlive: _.size(playersState),
+    playersWaiting: 0
+  })
+
+  await fb('players').update(playersState)
+  await fb('status').set('CHOOSE_SKILL')
+}
+
 const gameState = {
+  meta: {
+    turn: {
+      playersAlive: 10,
+      playersWaiting: 0
+    }
+  },
+  status: 'CHOOSE_SKILL|REVIEW_TURN',
   players: {
     a123: {
       name: 'player 1',
@@ -220,7 +164,7 @@ const gameState = {
     turn1: [
       {
         player: 'player 1',
-        actionName: 'ASSASSIN_HIT',
+        skillId: 'ASSASSIN_HIT',
         target: 'player 2'
       },
       {}
@@ -237,5 +181,7 @@ const gameState = {
 export default {
   createNewGame,
   joinGame,
-  onGameStateChange
+  onGameStateChange,
+  startGame,
+  queueSkill
 }

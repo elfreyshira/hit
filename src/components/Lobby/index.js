@@ -10,7 +10,7 @@ class Lobby extends Component {
 
   static propTypes = {
     onJoinGame: React.PropTypes.func,
-    appState: React.PropTypes.object,
+    appState: React.PropTypes.object
   }
 
   onJoinGame = async (evt) => {
@@ -21,14 +21,14 @@ class Lobby extends Component {
   }
 
   renderPlayerList = () => {
-    if (!_.isEmpty(this.props, 'appState.gameState.players')) {
+    if (_.has(this.props, 'appState.gameState.players')) {
       return (
         <div>
           <hr/>
           <h4>Players joined</h4>
           <ul>
             {_.map(this.props.appState.gameState.players, (playerObj) => {
-              return <li>{playerObj.name}</li>
+              return <li key={playerObj.name}>{playerObj.name}</li>
             })}
           </ul>
         </div>
