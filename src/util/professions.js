@@ -34,11 +34,22 @@ export const PROFESSIONS = {
   TANK_AUTO_HEAL: {
     name: 'Groot',
     quote: 'We are Groot.',
-    description: `You recover 1 health at the end of every turn.`,
+    description: `You recover 1 health every turn.`,
 
     startingHealth: 12,
     possibleSkills: ['HIT_2'],
     postTurnStep: 'HEAL_BY_1'
+  },
+
+  TANK_DOUBLE_DAMAGE_HEAL: {
+    name: 'Mammoth',
+    quote: 'Tis just a flesh wound.',
+    description: `You receive double hit damage, but you recover 2 health every turn.`,
+
+    startingHealth: 20,
+    possibleSkills: ['HIT_2'],
+    hitFilter: 'RECEIVE_DOUBLE_DAMAGE',
+    postTurnStep: 'HEAL_BY_2'
   },
 
   ASSASSIN_NORMAL_LOW: {
@@ -157,13 +168,26 @@ export const HIT_FILTERS = {
     if (oldPlayersState[playerId].health - newPlayersState[playerId].health <= 2) {
       newPlayersState[playerId].health = oldPlayersState[playerId].health
     }
-  }
+  },
+  RECEIVE_DOUBLE_DAMAGE (oldPlayersState, newPlayersState, playerId) {
+    const damageReceived = oldPlayersState[playerId].health - newPlayersState[playerId].health
+    newPlayersState[playerId].health = Math.max(
+      oldPlayersState[playerId].health - (damageReceived * 2),
+      0
+    )
+  },
 }
 
 export const POST_TURN_STEPS = {
   HEAL_BY_1 (newPlayersState, playerId) {
     newPlayersState[playerId].health = Math.min(
       newPlayersState[playerId].health + 1,
+      newPlayersState[playerId].maxHealth
+    )
+  },
+  HEAL_BY_2 (newPlayersState, playerId) {
+    newPlayersState[playerId].health = Math.min(
+      newPlayersState[playerId].health + 2,
       newPlayersState[playerId].maxHealth
     )
   }
