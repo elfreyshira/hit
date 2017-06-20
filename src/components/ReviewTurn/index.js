@@ -7,6 +7,7 @@ import { PROFESSIONS, SKILLS } from '../../util/professions'
 import Button from '../Button'
 import PlayerInfo from '../PlayerInfo'
 import WaitingBlock from '../WaitingBlock'
+import HitsLog from './HitsLog'
 
 class ReviewTurn extends Component {
 
@@ -16,35 +17,6 @@ class ReviewTurn extends Component {
 
   state = {
     isWaiting: false
-  }
-
-  renderTurnMoves = () => {
-    const currentTurn = this.props.appState.gameState.turns.currentTurn
-
-    const hitLogArray = _.chain(this.props.appState.gameState.turns['turn' + currentTurn])
-      .values()
-      .filter((turnObj) => {
-        return _.startsWith(turnObj.skill, 'HIT')
-      })
-      .map((turnObj) => {
-        const targetName = this.props.appState.gameState.players[turnObj.target].name
-        return targetName + ' was hit!'
-      })
-      .sortBy() // default alphabetical
-      .valueOf()
-
-    if (hitLogArray.length) {
-      return (
-        <ul>
-          {hitLogArray.map((hitLog, index) => {
-            return <li key={hitLog + index}>{hitLog}</li>
-          })}
-        </ul>
-      )
-    }
-    else {
-      return 'Nobody was hit. Boring.'
-    }
   }
 
   onReadyToMoveOn = () => {
@@ -76,7 +48,7 @@ class ReviewTurn extends Component {
         <PlayerInfo appState={this.props.appState} />
         <hr />
         <h4>Turn {currentTurn} hits review:</h4>
-        {this.renderTurnMoves()}
+        <HitsLog appState={this.props.appState} />
         <hr />
         {this.renderMoveOn()}
       </div>

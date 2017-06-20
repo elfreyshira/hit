@@ -5,6 +5,7 @@ import Landing from  './components/Landing'
 import Lobby from  './components/Lobby'
 import ChooseSkill from  './components/ChooseSkill'
 import ReviewTurn from  './components/ReviewTurn'
+import SpectatorView from  './components/SpectatorView'
 
 import getRoomID from './util/getRoomID'
 import actions from './actions'
@@ -40,7 +41,7 @@ class App extends Component {
 
   onJoinGame = (playerId) => {
     this.setState({player: playerId})
-    
+
     if (typeof(Storage) !== 'undefined') {
       sessionStorage.setItem('player', playerId)
       sessionStorage.setItem('room', this.state.room)
@@ -60,14 +61,25 @@ class App extends Component {
   }
 
   renderChooseSkill () {
-    if (this.state.player && this.state.gameState.status === 'CHOOSE_SKILL') {
+    if (this.state.player && this.state.gameState.status === 'CHOOSE_SKILL' && this.isPlayerAlive()) {
       return <ChooseSkill appState={this.state} />
     }
   }
 
   renderReviewTurn () {
-    if (this.state.player && this.state.gameState.status === 'REVIEW_TURN') {
+    if (this.state.player && this.state.gameState.status === 'REVIEW_TURN' && this.isPlayerAlive()) {
       return <ReviewTurn appState={this.state} />
+    }
+  }
+
+  isPlayerAlive = () => {
+    return _.get(this.state.gameState, ['players', this.state.player, 'health']) > 0
+  }
+  renderSpectatorView () {
+    // only show if the game has already started
+    // and either the player's dead or it's somebody who's just watching
+    if (this.state.gameState.status && (!this.isPlayerAlive() || !this.state.player)) {
+      return <SpectatorView appState={this.state} />
     }
   }
 
@@ -76,6 +88,7 @@ class App extends Component {
       <div className="">
         {this.renderChooseSkill()}
         {this.renderReviewTurn()}
+        {this.renderSpectatorView()}
         {this.renderLanding()}
         {this.renderLobby()}
       </div>

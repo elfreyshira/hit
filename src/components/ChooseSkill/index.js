@@ -70,7 +70,8 @@ class ChooseSkill extends Component {
   renderTargetList = () => {
     if (this.state.chosenSkillId && !this.hasChosenSkillAndTarget()) {
       const targetButtons = _.map(this.props.appState.gameState.players, (targetObj, targetId) => {
-        if (targetId === this.props.appState.player) {
+        if (targetId === this.props.appState.player || targetObj.health <= 0) {
+          // don't show target if it's self or if target is dead
           return null
         }
         else {

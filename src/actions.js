@@ -73,13 +73,21 @@ async function performAllSkills () {
     .sortBy((skillObj) => SKILLS[skillObj.skill].priority)
     .valueOf()
 
-  const playersState = (await fb('players').once('value')).val()
+  const oldPlayersState = (await fb('players').once('value')).val()
+  const newPlayersState = _.cloneDeep(oldPlayersState)
 
   _.forEach(skillsByPriority, (skillObj) => {
-    SKILLS[skillObj.skill].doSkill(playersState, skillObj)
+    SKILLS[skillObj.skill].doSkill(newPlayersState, skillObj)
+  })
+  await fb('players').update(newPlayersState)
+
+  _.map(newPlayersState, (newPlayerObj, playerId) => {
+    if (newPlayerObj.health <= 0 && oldPlayersState[playerId].health > 0) {
+      fb('meta/turn/playersAlive').transaction((playersAlive) => (playersAlive - 1))
+    }
   })
 
-  await fb('players').update(playersState)
+
   await fb('status').set('REVIEW_TURN')
 }
 global.performAllSkills = performAllSkills

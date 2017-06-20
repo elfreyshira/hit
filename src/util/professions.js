@@ -94,7 +94,7 @@ export const SKILLS = {
     priority: 2,
     doSkill (playersState, payload) {
       const {player, target} = payload
-      playersState[target].health = playersState[target].health - 2
+      playersState[target].health = Math.max(playersState[target].health - 2, 0)
     }
   },
   HIT_3: {
@@ -102,7 +102,7 @@ export const SKILLS = {
     priority: 2,
     doSkill (playersState, payload) {
       const {player, target} = payload
-      playersState[target].health = playersState[target].health - 3
+      playersState[target].health = Math.max(playersState[target].health - 3, 0)
     }
   },
   HIT_4: {
@@ -110,7 +110,7 @@ export const SKILLS = {
     priority: 2,
     doSkill (playersState, payload) {
       const {player, target} = payload
-      playersState[target].health = playersState[target].health - 4
+      playersState[target].health = Math.max(playersState[target].health - 4, 0)
     }
   },
   HEAL_2: {
