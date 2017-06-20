@@ -99,61 +99,37 @@ export const PROFESSIONS = {
 }
 
 
-export const SKILLS = {
-  HIT_2: {
-    name: 'Hit for 2 damage.',
+function createHitSkillObj (hitAmount) {
+  return {
+    name: 'Hit for ' + hitAmount + ' damage.',
     type: 'HIT',
     doSkill (playersState, payload) {
       const {player, target} = payload
-      playersState[target].health = Math.max(playersState[target].health - 2, 0)
+      playersState[target].health = Math.max(playersState[target].health - hitAmount, 0)
     }
-  },
-  HIT_3: {
-    name: 'Hit for 3 damage.',
-    type: 'HIT',
-    doSkill (playersState, payload) {
-      const {player, target} = payload
-      playersState[target].health = Math.max(playersState[target].health - 3, 0)
-    }
-  },
-  HIT_4: {
-    name: 'Hit for 4 damage.',
-    type: 'HIT',
-    doSkill (playersState, payload) {
-      const {player, target} = payload
-      playersState[target].health = Math.max(playersState[target].health - 4, 0)
-    }
-  },
-  HEAL_2: {
-    name: 'Heal for 2 health.',
+  }
+}
+
+function createHealSkillObj (healAmount) {
+  return {
+    name: 'Heal for ' + healAmount + ' health.',
     type: 'HEAL',
     doSkill (playersState, payload) {
       const {player, target} = payload
-      const healedHealth = playersState[target].health + 2
-      const maxHealth = playersState[target].maxHealth
-      playersState[target].health = Math.min(healedHealth, maxHealth)
-    }
-  },
-  HEAL_3: {
-    name: 'Heal for 3 health.',
-    type: 'HEAL',
-    doSkill (playersState, payload) {
-      const {player, target} = payload
-      const healedHealth = playersState[target].health + 3
-      const maxHealth = playersState[target].maxHealth
-      playersState[target].health = Math.min(healedHealth, maxHealth)
-    }
-  },
-  HEAL_4: {
-    name: 'Heal for 4 health.',
-    type: 'HEAL',
-    doSkill (playersState, payload) {
-      const {player, target} = payload
-      const healedHealth = playersState[target].health + 4
+      const healedHealth = playersState[target].health + healAmount
       const maxHealth = playersState[target].maxHealth
       playersState[target].health = Math.min(healedHealth, maxHealth)
     }
   }
+}
+
+export const SKILLS = {
+  HIT_2: createHitSkillObj(2),
+  HIT_3: createHitSkillObj(3),
+  HIT_4: createHitSkillObj(4),
+  HEAL_2: createHealSkillObj(2),
+  HEAL_3: createHealSkillObj(3),
+  HEAL_4: createHealSkillObj(4)
 }
 
 // all of these functions write to newPlayersState
@@ -178,19 +154,18 @@ export const HIT_FILTERS = {
   },
 }
 
-export const POST_TURN_STEPS = {
-  HEAL_BY_1 (newPlayersState, playerId) {
+function createHealBy (amountHealed) {
+  return function (newPlayersState, playerId) {
     newPlayersState[playerId].health = Math.min(
-      newPlayersState[playerId].health + 1,
-      newPlayersState[playerId].maxHealth
-    )
-  },
-  HEAL_BY_2 (newPlayersState, playerId) {
-    newPlayersState[playerId].health = Math.min(
-      newPlayersState[playerId].health + 2,
+      newPlayersState[playerId].health + amountHealed,
       newPlayersState[playerId].maxHealth
     )
   }
+}
+
+export const POST_TURN_STEPS = {
+  HEAL_BY_1: createHealBy(1),
+  HEAL_BY_2: createHealBy(2)
 }
 
 export default {
