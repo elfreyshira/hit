@@ -45,20 +45,10 @@ async function joinGame (name) {
 
 async function queueSkill (payload) {
   const {player, target, skill} = payload
-  let currentTurn = (await fb('turns', 'currentTurn').once('value')).val()
+  const currentTurn = (await fb('turns/currentTurn').once('value')).val()
 
-  if (!currentTurn) {
-    currentTurn = 1
-    await fb('turns/currentTurn').set(currentTurn)
-  }
-
-  await fb('meta/turn/playersWaiting').transaction((playersWaiting) => {
-    if (_.isNumber(playersWaiting)) {
-      return playersWaiting + 1
-    }
-    else {
-      return 0
-    }
+  await fb('meta/turn/playersChosenSkill').transaction((playersChosenSkill) => {
+    return _.isNumber(playersChosenSkill) ? playersChosenSkill + 1 : 0
   })
 
   await fb('turns', 'turn' + currentTurn).push({
@@ -67,16 +57,15 @@ async function queueSkill (payload) {
     skill
   })
 
-  const {playersAlive, playersWaiting} = (await fb('meta/turn').once('value')).val()
-  if (playersAlive === playersWaiting) {
+  const {playersAlive, playersChosenSkill} = (await fb('meta/turn').once('value')).val()
+  if (playersAlive === playersChosenSkill) {
     performAllSkills()
   }
-
   
 }
 
 async function performAllSkills () {
-  const currentTurn = (await fb('turns', 'currentTurn').once('value')).val()
+  const currentTurn = (await fb('turns/currentTurn').once('value')).val()
   const queuedSkills = (await fb('turns', 'turn' + currentTurn).once('value')).val()
   
   const skillsByPriority = _.chain(queuedSkills)
@@ -90,20 +79,24 @@ async function performAllSkills () {
     SKILLS[skillObj.skill].doSkill(playersState, skillObj)
   })
 
-  fb('players').update(playersState)
+  await fb('players').update(playersState)
+  await fb('status').set('REVIEW_TURN')
 }
 global.performAllSkills = performAllSkills
 
 
-async function nextTurn () {
-  await fb('turns', 'currentTurn').transaction((currentTurn) => {
-    if (_.isNumber(currentTurn)) {
-      return currentTurn + 1
-    }
-    else {
-      return 1
-    }
+async function moveToNextTurn () {
+  await fb('meta/turn').update({playersChosenSkill: 0, playersReviewedTurn: 0})
+
+  const currentTurn = (await fb('turns/currentTurn').once('value')).val()
+
+  // remove moves from current term to keep payload small
+  fb('turns', 'turn' + currentTurn).remove() // no need to await
+
+  await fb('turns/currentTurn').transaction((currentTurn) => {
+    return _.isNumber(currentTurn) ? currentTurn + 1 : 0
   })
+  await fb('status').set('CHOOSE_SKILL')
 }
 
 async function createNewGame () {
@@ -135,18 +128,33 @@ async function startGame () {
 
   await fb('meta/turn').set({
     playersAlive: _.size(playersState),
-    playersWaiting: 0
+    playersChosenSkill: 0,
+    playersReviewedTurn: 0
   })
+
+  await fb('turns/currentTurn').set(1)
 
   await fb('players').update(playersState)
   await fb('status').set('CHOOSE_SKILL')
+}
+
+async function readyForNextTurn () {
+  await fb('meta/turn/playersReviewedTurn').transaction((playersReviewedTurn) => {
+    return _.isNumber(playersReviewedTurn) ? playersReviewedTurn + 1 : 0
+  })
+
+  const {playersAlive, playersReviewedTurn} = (await fb('meta/turn').once('value')).val()
+  if (playersAlive === playersReviewedTurn) {
+    moveToNextTurn()
+  }
 }
 
 const gameState = {
   meta: {
     turn: {
       playersAlive: 10,
-      playersWaiting: 0
+      playersChosenSkill: 0,
+      playersReviewedTurn: 0
     }
   },
   status: 'CHOOSE_SKILL|REVIEW_TURN',
@@ -183,5 +191,6 @@ export default {
   joinGame,
   onGameStateChange,
   startGame,
-  queueSkill
+  queueSkill,
+  readyForNextTurn
 }
