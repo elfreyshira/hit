@@ -38,7 +38,7 @@ export const PROFESSIONS = {
 
     startingHealth: 12,
     possibleSkills: ['HIT_2'],
-    postHitFilter: 'HEAL_BY_1'
+    postTurnStep: 'HEAL_BY_1'
   },
 
   ASSASSIN_NORMAL_LOW: {
@@ -91,7 +91,7 @@ export const PROFESSIONS = {
 export const SKILLS = {
   HIT_2: {
     name: 'Hit for 2 damage.',
-    priority: 2,
+    type: 'HIT',
     doSkill (playersState, payload) {
       const {player, target} = payload
       playersState[target].health = Math.max(playersState[target].health - 2, 0)
@@ -99,7 +99,7 @@ export const SKILLS = {
   },
   HIT_3: {
     name: 'Hit for 3 damage.',
-    priority: 2,
+    type: 'HIT',
     doSkill (playersState, payload) {
       const {player, target} = payload
       playersState[target].health = Math.max(playersState[target].health - 3, 0)
@@ -107,7 +107,7 @@ export const SKILLS = {
   },
   HIT_4: {
     name: 'Hit for 4 damage.',
-    priority: 2,
+    type: 'HIT',
     doSkill (playersState, payload) {
       const {player, target} = payload
       playersState[target].health = Math.max(playersState[target].health - 4, 0)
@@ -115,7 +115,7 @@ export const SKILLS = {
   },
   HEAL_2: {
     name: 'Heal for 2 health.',
-    priority: 3,
+    type: 'HEAL',
     doSkill (playersState, payload) {
       const {player, target} = payload
       const healedHealth = playersState[target].health + 2
@@ -125,7 +125,7 @@ export const SKILLS = {
   },
   HEAL_3: {
     name: 'Heal for 3 health.',
-    priority: 3,
+    type: 'HEAL',
     doSkill (playersState, payload) {
       const {player, target} = payload
       const healedHealth = playersState[target].health + 3
@@ -135,7 +135,7 @@ export const SKILLS = {
   },
   HEAL_4: {
     name: 'Heal for 4 health.',
-    priority: 3,
+    type: 'HEAL',
     doSkill (playersState, payload) {
       const {player, target} = payload
       const healedHealth = playersState[target].health + 4
@@ -145,7 +145,33 @@ export const SKILLS = {
   }
 }
 
+// all of these functions write to newPlayersState
+export const HIT_FILTERS = {
+  NO_MORE_THAN_2 (oldPlayersState, newPlayersState, playerId) {
+    newPlayersState[playerId].health = Math.max(
+      oldPlayersState[playerId].health - 2,
+      newPlayersState[playerId].health
+    )
+  },
+  NO_DAMAGE_IF_2_OR_LESS (oldPlayersState, newPlayersState, playerId) {
+    if (oldPlayersState[playerId].health - newPlayersState[playerId].health <= 2) {
+      newPlayersState[playerId].health = oldPlayersState[playerId].health
+    }
+  }
+}
+
+export const POST_TURN_STEPS = {
+  HEAL_BY_1 (newPlayersState, playerId) {
+    newPlayersState[playerId].health = Math.min(
+      newPlayersState[playerId].health + 1,
+      newPlayersState[playerId].maxHealth
+    )
+  }
+}
+
 export default {
   PROFESSIONS,
-  SKILLS
+  SKILLS,
+  HIT_FILTERS,
+  POST_TURN_STEPS
 }

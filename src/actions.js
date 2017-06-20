@@ -2,7 +2,7 @@ import firebase from 'firebase'
 import _ from 'lodash'
 
 import getRoomID from './util/getRoomID'
-import { PROFESSIONS, SKILLS } from './util/professions'
+import { PROFESSIONS, SKILLS, HIT_FILTERS, POST_TURN_STEPS } from './util/professions'
 
 
 var config = {
@@ -67,18 +67,44 @@ async function queueSkill (payload) {
 async function performAllSkills () {
   const currentTurn = (await fb('turns/currentTurn').once('value')).val()
   const queuedSkills = (await fb('turns', 'turn' + currentTurn).once('value')).val()
-  
-  const skillsByPriority = _.chain(queuedSkills)
-    .values()
-    .sortBy((skillObj) => SKILLS[skillObj.skill].priority)
-    .valueOf()
 
   const oldPlayersState = (await fb('players').once('value')).val()
   const newPlayersState = _.cloneDeep(oldPlayersState)
 
-  _.forEach(skillsByPriority, (skillObj) => {
-    SKILLS[skillObj.skill].doSkill(newPlayersState, skillObj)
+  ////// PERFORM HIT SKILLS AND HIT FILTERS ///////
+  const hitSkills = _.chain(queuedSkills)
+    .values()
+    .filter((skillObj) => (SKILLS[skillObj.skill].type === 'HIT'))
+    .valueOf()
+
+  _.forEach(hitSkills, (skillObj) => {
+    SKILLS[skillObj.skill].doSkill(newPlayersState, skillObj) // write to newPlayersState
   })
+  _.forEach(oldPlayersState, (playerObj, playerId) => {
+    const hitFilterId = PROFESSIONS[playerObj.profession].hitFilter
+    if (hitFilterId) {
+      HIT_FILTERS[hitFilterId](oldPlayersState, newPlayersState, playerId) // write to newPlayersState
+    }
+  })
+
+  ////// PERFORM HEAL SKILLS ///////
+  const healSkills = _.chain(queuedSkills)
+    .values()
+    .filter((skillObj) => (SKILLS[skillObj.skill].type === 'HEAL'))
+    .valueOf()
+
+  _.forEach(healSkills, (skillObj) => {
+    SKILLS[skillObj.skill].doSkill(newPlayersState, skillObj) // write to newPlayersState
+  })
+
+  ////// PERFORM POST TURN CALCULATIONS ///////
+  _.forEach(oldPlayersState, (playerObj, playerId) => {
+    const postTurnStepId = PROFESSIONS[playerObj.profession].postTurnStep
+    if (postTurnStepId) {
+      POST_TURN_STEPS[postTurnStepId](newPlayersState, playerId) // write to newPlayersState
+    }
+  })
+
   await fb('players').update(newPlayersState)
 
   _.map(newPlayersState, (newPlayerObj, playerId) => {
@@ -109,8 +135,7 @@ async function moveToNextTurn () {
 
 async function createNewGame () {
   const newRoomID = create4CharacterID()
-  window.location.hash = 'room=' + newRoomID //+ '&first=true';
-  window.location.reload();
+  window.location.search = 'room=' + newRoomID //+ '&first=true';
 }
 
 function onGameStateChange (callback) {
