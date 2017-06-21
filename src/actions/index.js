@@ -1,9 +1,11 @@
 import firebase from 'firebase'
 import _ from 'lodash'
 
-import getRoomID from './util/getRoomID'
-import { PROFESSIONS, SKILLS, HIT_FILTERS, POST_TURN_STEPS } from './util/professions'
+import getRoomID from '../util/getRoomID'
+import { PROFESSIONS, SKILLS, HIT_FILTERS, POST_TURN_STEPS } from '../util/professions'
 
+import fb from './fb'
+import startGame from './startGame'
 
 var config = {
   apiKey: "AIzaSyBQhxIPIgzp236kPKFRt6AqrB69tE9I3YM",
@@ -26,9 +28,6 @@ firebase.initializeApp(config)
 const possibleCharacters = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'.split('')
 function create4CharacterID () {
   return _.times(4, _.partial(_.sample, possibleCharacters)).join('')
-}
-function fb (/* args */) {
-  return firebase.database().ref('rooms/' + getRoomID() + '/' + _.toArray(arguments).join('/'))
 }
 
 async function addPlayer (payload) {
@@ -146,31 +145,6 @@ function onGameStateChange (callback) {
 
 global.fb = fb
 
-async function startGame () {
-  const playersState = (await fb('players').once('value')).val()
-
-  // assigning a profession to each player
-  const shuffledProfessionKeys = _.chain(PROFESSIONS).keys().shuffle().valueOf()
-  let index = 0
-  _.forEach(playersState, (playerObj, playerId) => {
-    const playerProfessionKey = shuffledProfessionKeys[index++]
-    playerObj.profession = playerProfessionKey
-    playerObj.maxHealth = PROFESSIONS[playerProfessionKey].startingHealth
-    playerObj.health = PROFESSIONS[playerProfessionKey].startingHealth
-  })
-
-  await fb('meta/turn').set({
-    playersAlive: _.size(playersState),
-    playersChosenSkill: 0,
-    playersReviewedTurn: 0
-  })
-
-  await fb('turns/currentTurn').set(1)
-
-  await fb('players').update(playersState)
-  await fb('status').set('CHOOSE_SKILL')
-}
-
 async function readyForNextTurn () {
   await fb('meta/turn/playersReviewedTurn').transaction((playersReviewedTurn) => {
     return _.isNumber(playersReviewedTurn) ? playersReviewedTurn + 1 : 0
@@ -196,7 +170,7 @@ const gameState = {
       name: 'player 1',
       health: 5,
       profession: 'TANK_LIFE',
-      team: 'bad|good|renegade'
+      team: 'BAD|GOOD|RENEGADE'
     },
     b234: {}
   },
