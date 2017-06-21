@@ -3,6 +3,7 @@ import _ from 'lodash'
 
 import PlayerInfo from '../PlayerInfo'
 import HitsLog from '../ReviewTurn/HitsLog'
+import DeadPeople from '../ReviewTurn/DeadPeople'
 
 import { PROFESSIONS, SKILLS } from '../../util/professions'
 
@@ -39,6 +40,7 @@ class SpectatorView extends Component {
           ? <HitsLog appState={this.props.appState} />
           : null
         }
+        <DeadPeople appState={this.props.appState} />
       </div>
     )
   }

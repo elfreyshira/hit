@@ -24,11 +24,14 @@ class HitsLog extends Component {
 
     if (hitLogArray.length) {
       return (
-        <ul>
-          {hitLogArray.map((hitLog, index) => {
-            return <li key={hitLog + index}>{hitLog}</li>
-          })}
-        </ul>
+        <div>
+          <h4>Turn {currentTurn} hits review:</h4>
+          <ul>
+            {hitLogArray.map((hitLog, index) => {
+              return <li key={hitLog + index}>{hitLog}</li>
+            })}
+          </ul>
+        </div>
       )
     }
     else {

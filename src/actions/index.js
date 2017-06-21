@@ -104,8 +104,16 @@ async function performAllSkills () {
     }
   })
 
+  ////// ANYBODY WHO IS DEAD STAYS DEAD ///////
+  _.forEach(oldPlayersState, (playerObj, playerId) => {
+    if (playerObj.health <= 0) {
+      newPlayersState[playerId].health = 0
+    }
+  })
+
   await fb('players').update(newPlayersState)
 
+  // check if anybody died
   _.map(newPlayersState, (newPlayerObj, playerId) => {
     if (newPlayerObj.health <= 0 && oldPlayersState[playerId].health > 0) {
       fb('meta/turn/playersAlive').transaction((playersAlive) => (playersAlive - 1))

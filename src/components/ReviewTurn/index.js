@@ -8,6 +8,7 @@ import Button from '../Button'
 import PlayerInfo from '../PlayerInfo'
 import WaitingBlock from '../WaitingBlock'
 import HitsLog from './HitsLog'
+import DeadPeople from './DeadPeople'
 
 class ReviewTurn extends Component {
 
@@ -47,8 +48,8 @@ class ReviewTurn extends Component {
       <div>
         <PlayerInfo appState={this.props.appState} />
         <hr />
-        <h4>Turn {currentTurn} hits review:</h4>
         <HitsLog appState={this.props.appState} />
+        <DeadPeople appState={this.props.appState} />
         <hr />
         {this.renderMoveOn()}
       </div>
