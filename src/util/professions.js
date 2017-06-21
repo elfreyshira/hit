@@ -1,12 +1,15 @@
 // health ranges from 10 - 20, depending on power of profession Skill
 // hit filter: hits are checked to adjust damage to the player
 // turn filter: events that happen after all skills are performed
+// different types: tank, assassin, support, special(?)
+
 export const PROFESSIONS = {
   TANK_HEALTH: {
     name: 'Tankilicious',
     quote: "ME TANK. YOU HIT.",
     description: `You can't do much, but you have a LOT of health.`,
 
+    type: 'TANK',
     startingHealth: 20,
     possibleSkills: ['HIT_2']
   },
@@ -16,6 +19,7 @@ export const PROFESSIONS = {
     quote: 'Ow that barely hurt.',
     description: `Each turn, you cannot lose more than 2 health.`,
 
+    type: 'TANK',
     startingHealth: 14,
     possibleSkills: ['HIT_2'],
     hitFilter: 'NO_MORE_THAN_2'
@@ -26,6 +30,7 @@ export const PROFESSIONS = {
     quote: 'I am squishy.',
     description: `If you receive 2 or less damage in a turn, it's negated.`,
 
+    type: 'TANK',
     startingHealth: 10,
     possibleSkills: ['HIT_2'],
     hitFilter: 'NO_DAMAGE_IF_2_OR_LESS'
@@ -36,6 +41,7 @@ export const PROFESSIONS = {
     quote: 'We are Groot.',
     description: `You recover 1 health every turn.`,
 
+    type: 'TANK',
     startingHealth: 12,
     possibleSkills: ['HIT_2'],
     postTurnStep: 'HEAL_BY_1'
@@ -46,6 +52,7 @@ export const PROFESSIONS = {
     quote: 'Tis just a flesh wound.',
     description: `You receive double hit damage, but you recover 2 health every turn.`,
 
+    type: 'TANK',
     startingHealth: 20,
     possibleSkills: ['HIT_2'],
     hitFilter: 'RECEIVE_DOUBLE_DAMAGE',
@@ -57,6 +64,7 @@ export const PROFESSIONS = {
     quote: `Ayy, I'm killin' here!`,
     description: `You can hit somebody for 3 damage.`,
 
+    type: 'ASSASSIN',
     startingHealth: 13,
     possibleSkills: ['HIT_2', 'HIT_3']
   },
@@ -66,6 +74,7 @@ export const PROFESSIONS = {
     quote: `*killing intensifies*`,
     description: `You can hit somebody for 4 damage.`,
 
+    type: 'ASSASSIN',
     startingHealth: 10,
     possibleSkills: ['HIT_2', 'HIT_4']
   },
@@ -75,6 +84,7 @@ export const PROFESSIONS = {
     quote: `We're no strangers to love.`,
     description: `You bring healing with the power of song. You can heal somebody for 2 health.`,
 
+    type: 'SUPPORT',
     startingHealth: 16,
     possibleSkills: ['HIT_2', 'HEAL_2']
   },
@@ -84,6 +94,7 @@ export const PROFESSIONS = {
     quote: `I heal, you kill.`,
     description: `You can heal somebody for 3 health.`,
 
+    type: 'SUPPORT',
     startingHealth: 13,
     possibleSkills: ['HIT_2', 'HEAL_3']
   },
@@ -93,6 +104,7 @@ export const PROFESSIONS = {
     quote: `NEVER GONNA GIVE YOU UP!`,
     description: `You can heal somebody for 4 health.`,
 
+    type: 'SUPPORT',
     startingHealth: 10,
     possibleSkills: ['HIT_2', 'HEAL_4']
   }

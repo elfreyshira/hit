@@ -69,23 +69,26 @@ class ChooseSkill extends Component {
 
   renderTargetList = () => {
     if (this.state.chosenSkillId && !this.hasChosenSkillAndTarget()) {
-      const targetButtons = _.map(this.props.appState.gameState.players, (targetObj, targetId) => {
-        if (targetId === this.props.appState.player || targetObj.health <= 0) {
-          // don't show target if it's self or if target is dead
-          return null
-        }
-        else {
-          return (
-            <Button
-              wrapperStyle={{minWidth:'200px'}}
-              key={targetId}
-              onClick={_.partial(this.onChooseTarget, targetId)}
-            >
-              {targetObj.name}
-            </Button>
-          )
-        }
-      })
+      const targetButtons = _.chain(this.props.appState.gameState.players)
+        .shuffle() // mix up the targets
+        .map((targetObj, targetId) => {
+          if (targetId === this.props.appState.player || targetObj.health <= 0) {
+            // don't show target if it's self or if target is dead
+            return null
+          }
+          else {
+            return (
+              <Button
+                wrapperStyle={{minWidth:'200px'}}
+                key={targetId}
+                onClick={_.partial(this.onChooseTarget, targetId)}
+              >
+                {targetObj.name}
+              </Button>
+            )
+          }
+        })
+        .valueOf()
 
       const currentTurn = this.props.appState.gameState.turns.currentTurn
       return (
