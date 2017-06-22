@@ -6,9 +6,13 @@ class Button extends Component {
 
   static propTypes = {
     // wrapperStyle
+    // hidden
   }
 
   render() {
+    if (this.props.hidden) {
+      return null
+    }
     return (
       <div>
         <div className="hit-button-wrapper" style={this.props.wrapperStyle}>

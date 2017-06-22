@@ -13,6 +13,10 @@ class Lobby extends Component {
     appState: React.PropTypes.object
   }
 
+  state = {
+    shouldHideButton: false
+  }
+
   onJoinGame = async (evt) => {
     evt.preventDefault()
     const name = this.refs.name.value
@@ -51,12 +55,22 @@ class Lobby extends Component {
     }
   }
 
-  renderReadyButton () {
+  onStartGame = () => {
+    console.log('omg')
+    this.setState({shouldHideButton: true})
+    actions.startGame()
+  }
+  renderReadyButton = () => {
     if (this.props.appState.player) {
       return (
         <div>
           <hr/>
-          <Button onClick={actions.startGame}>Everybody is ready</Button>
+          <Button
+            hidden={this.state.shouldHideButton}
+            onClick={this.onStartGame}
+          >
+            Everybody is ready. Begin game.
+          </Button>
         </div>
       )
     }

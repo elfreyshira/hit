@@ -15,15 +15,19 @@ class ChooseSkill extends Component {
   }
 
   state = {
-    chosenSkillId: null
+    chosenSkillId: null,
+    shouldHideButton: false
   }
 
-  onChooseSkill = (skillId) => {
-    this.setState({chosenSkillId: skillId})
+  onChooseSkill = (skillId, skillName) => {
+    this.setState({
+      chosenSkillId: skillId,
+      chosenSkillName: skillName
+    })
   }
 
   onChooseTarget = async (targetId) => {
-    // const {player, target, skill} = payload
+    this.setState({shouldHideButton: true})
     await actions.queueSkill({
       player: this.props.appState.player,
       target: targetId,
@@ -56,7 +60,7 @@ class ChooseSkill extends Component {
               <Button
                 wrapperStyle={{minWidth: '200px'}}
                 key={skillId}
-                onClick={_.partial(this.onChooseSkill, skillId)}
+                onClick={_.partial(this.onChooseSkill, skillId, SKILLS[skillId].name)}
               >
                 {SKILLS[skillId].name}
               </Button>
@@ -67,6 +71,10 @@ class ChooseSkill extends Component {
     }
   }
 
+  onChooseDifferentSkill = (evt) => {
+    evt.preventDefault()
+    this.setState({chosenSkillId: null})
+  }
   renderTargetList = () => {
     if (this.state.chosenSkillId && !this.hasChosenSkillAndTarget()) {
       const targetButtons = _.chain(this.props.appState.gameState.players)
@@ -78,6 +86,7 @@ class ChooseSkill extends Component {
           else {
             return (
               <Button
+                hidden={this.state.shouldHideButton}
                 wrapperStyle={{minWidth:'200px'}}
                 key={targetId}
                 onClick={_.partial(this.onChooseTarget, targetId)}
@@ -87,12 +96,16 @@ class ChooseSkill extends Component {
             )
           }
         })
-        .shuffle() // mix up the targets
+        .shuffle() // mix up the targets to avoid bias
         .valueOf()
 
       const currentTurn = this.props.appState.gameState.turns.currentTurn
       return (
         <div>
+          <h5>
+            Skill chosen: {this.state.chosenSkillName}
+            <br/ ><a href="#" onClick={this.onChooseDifferentSkill}>[choose different skill]</a>
+          </h5>
           <h4>[Turn {currentTurn}] Select a target:</h4>
           {targetButtons}
         </div>
@@ -103,7 +116,7 @@ class ChooseSkill extends Component {
   renderWaiting () {
     if (this.hasChosenSkillAndTarget()) {
       return (
-        <WaitingBlock />
+        <WaitingBlock appState={this.props.appState} />
       )
     }
   }

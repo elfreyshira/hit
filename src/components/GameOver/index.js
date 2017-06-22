@@ -47,7 +47,8 @@ class GameOver extends Component {
 
     let victoryText
     if (victoryStatus === 'BAD_VICTORY') {
-      victoryText = 'The hitmen have successfully taken out the scum rebel forces. LONG LIVE KALDIR!'
+      victoryText =
+        'The hitmen have successfully taken out the rebel forces. LONG LIVE THE ETERNAL GOVERNMENT!'
     }
     else if (victoryStatus === 'GOOD_VICTORY') {
       victoryText = 'The evil hitmen are dead. Congrats, the rebel forces stand strong!'
@@ -57,6 +58,8 @@ class GameOver extends Component {
       <div>
         <h1>Game Over</h1>
         <h3>{victoryText}</h3>
+        <hr />
+        <PlayerInfo appState={this.props.appState} />
         <hr />
         {this.renderPlayersList()}
       </div>

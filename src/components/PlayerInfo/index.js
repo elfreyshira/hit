@@ -17,14 +17,15 @@ class PlayerInfo extends Component {
   renderEvilTeammates () {
     const playerObj = this.props.appState.gameState.players[this.props.appState.player]
     if (playerObj.team === 'BAD') {
-      const teammates = _.chain(this.props.appState.gameState.players)
+      const teammatesString = _.chain(this.props.appState.gameState.players)
         .reject((playerObj, playerId) => (this.props.appState.player === playerId))
         .filter({team: 'BAD'})
         .map('name')
         .valueOf()
         .join(', ')
-
-      return <p>Other evil hitmen teammates: {teammates}</p>
+      if (teammatesString) {
+        return <p>Other evil hitmen teammates: {teammatesString}</p>
+      }
     }
   }
 

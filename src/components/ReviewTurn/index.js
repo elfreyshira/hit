@@ -28,7 +28,7 @@ class ReviewTurn extends Component {
   }
   renderMoveOn = () => {
     if (this.state.isWaiting) {
-      return <WaitingBlock />
+      return <WaitingBlock appState={this.props.appState} />
     }
     else {
       const currentTurn = this.props.appState.gameState.turns.currentTurn
