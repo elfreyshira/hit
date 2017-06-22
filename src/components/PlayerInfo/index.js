@@ -36,7 +36,7 @@ class PlayerInfo extends Component {
         <p>Name: {playerObj.name}</p>
         <p>Profession: {PROFESSIONS[playerObj.profession].name}</p>
         <p>Description: {PROFESSIONS[playerObj.profession].description}</p>
-        <p>Health: {playerObj.health} / {playerObj.maxHealth}</p>
+        <p>Health: {Math.max(playerObj.health, 0)} / {playerObj.maxHealth}</p>
         <p>Team: {TEAM_NAMES[playerObj.team]}</p>
         {this.renderEvilTeammates()}
       </div>

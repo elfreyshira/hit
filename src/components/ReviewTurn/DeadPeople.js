@@ -14,12 +14,17 @@ class DeadPeople extends Component {
       .map((deadName) => <li key={deadName}>{deadName}</li>)
       .valueOf()
 
-    return (
-      <div>
-        <h4>These people are dead (RIP):</h4>
-        <ul>{deadPeople}</ul>
-      </div>
-    )
+    if (_.size(deadPeople) <= 0) {
+      return null
+    }
+    else {
+      return (
+        <div>
+          <h4>These people are dead (RIP):</h4>
+          <ul>{deadPeople}</ul>
+        </div>
+      )
+    }
   }
 }
 

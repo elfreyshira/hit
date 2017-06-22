@@ -6,6 +6,7 @@ import Lobby from  './components/Lobby'
 import ChooseSkill from  './components/ChooseSkill'
 import ReviewTurn from  './components/ReviewTurn'
 import SpectatorView from  './components/SpectatorView'
+import GameOver from  './components/GameOver'
 
 import getRoomID from './util/getRoomID'
 import actions from './actions'
@@ -18,7 +19,6 @@ class App extends Component {
     room: getRoomID(),
     localStatus: '',
     player: '',
-    // player: 'CKVB', // TEMPORARY!!!
     gameState: {}
   }
   componentDidMount = () => {
@@ -72,13 +72,22 @@ class App extends Component {
     }
   }
 
+  isGameOver () {
+    return this.state.gameState.status === 'BAD_VICTORY' || this.state.gameState.status === 'GOOD_VICTORY'
+  }
+  renderGameOver () {
+    if (this.isGameOver()) {
+      return <GameOver appState={this.state} />
+    }
+  }
+
   isPlayerAlive = () => {
     return _.get(this.state.gameState, ['players', this.state.player, 'health']) > 0
   }
   renderSpectatorView () {
     // only show if the game has already started
     // and either the player's dead or it's somebody who's just watching
-    if (this.state.gameState.status && (!this.isPlayerAlive() || !this.state.player)) {
+    if (this.state.gameState.status && (!this.isPlayerAlive() || !this.state.player) && !this.isGameOver()) {
       return <SpectatorView appState={this.state} />
     }
   }
@@ -89,6 +98,7 @@ class App extends Component {
         {this.renderChooseSkill()}
         {this.renderReviewTurn()}
         {this.renderSpectatorView()}
+        {this.renderGameOver()}
         {this.renderLanding()}
         {this.renderLobby()}
       </div>

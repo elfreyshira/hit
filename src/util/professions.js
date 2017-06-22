@@ -117,7 +117,7 @@ function createHitSkillObj (hitAmount) {
     type: 'HIT',
     doSkill (playersState, payload) {
       const {player, target} = payload
-      playersState[target].health = Math.max(playersState[target].health - hitAmount, 0)
+      playersState[target].health = playersState[target].health - hitAmount
     }
   }
 }
@@ -159,10 +159,7 @@ export const HIT_FILTERS = {
   },
   RECEIVE_DOUBLE_DAMAGE (oldPlayersState, newPlayersState, playerId) {
     const damageReceived = oldPlayersState[playerId].health - newPlayersState[playerId].health
-    newPlayersState[playerId].health = Math.max(
-      oldPlayersState[playerId].health - (damageReceived * 2),
-      0
-    )
+    newPlayersState[playerId].health = oldPlayersState[playerId].health - (damageReceived * 2)
   },
 }
 

@@ -120,8 +120,19 @@ async function performAllSkills () {
     }
   })
 
-
-  await fb('status').set('REVIEW_TURN')
+  ////// CHECK IF A TEAM HAS WON //////
+  const playersStateValues = _.values(newPlayersState)
+  const badTeam = _.filter(playersStateValues, {team: 'BAD'})
+  const goodTeam = _.filter(playersStateValues, {team: 'GOOD'})
+  if (badTeam.length === _.filter(badTeam, (playerObj) => playerObj.health <= 0).length) {
+    await fb('status').set('GOOD_VICTORY')
+  }
+  else if (goodTeam.length === _.filter(goodTeam, (playerObj) => playerObj.health <= 0).length) {
+    await fb('status').set('BAD_VICTORY')
+  }
+  else {
+    await fb('status').set('REVIEW_TURN')
+  }
 }
 global.performAllSkills = performAllSkills
 
