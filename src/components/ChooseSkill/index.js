@@ -7,6 +7,7 @@ import { PROFESSIONS, SKILLS } from '../../util/professions'
 import Button from '../Button'
 import PlayerInfo from '../PlayerInfo'
 import WaitingBlock from '../WaitingBlock'
+import HireDetective from '../HireDetective'
 
 class ChooseSkill extends Component {
 
@@ -104,7 +105,8 @@ class ChooseSkill extends Component {
         <div>
           <h5>
             Skill chosen: {this.state.chosenSkillName}
-            <br/ ><a href="#" onClick={this.onChooseDifferentSkill}>[choose different skill]</a>
+            <br />
+            <a href="#" onClick={this.onChooseDifferentSkill}>[choose different skill]</a>
           </h5>
           <h4>[Turn {currentTurn}] Select a target:</h4>
           {targetButtons}
@@ -121,6 +123,14 @@ class ChooseSkill extends Component {
     }
   }
 
+  renderHireDetective () {
+    if (!this.hasChosenSkillAndTarget()) {
+      return (
+        <HireDetective appState={this.props.appState} />
+      )
+    }
+  }
+
   render () {
     return (
       <div>
@@ -128,6 +138,7 @@ class ChooseSkill extends Component {
         <hr />
         {this.renderSkillList()}
         {this.renderTargetList()}
+        {this.renderHireDetective()}
         {this.renderWaiting()}
       </div>
     );

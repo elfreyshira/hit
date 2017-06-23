@@ -61,7 +61,6 @@ function assignTeamsAndProfessions (playersState) {
   return playersState
 }
 
-
 export default async function startGame () {
   const playersState = (await fb('players').once('value')).val()
 
@@ -71,6 +70,12 @@ export default async function startGame () {
     playersAlive: _.size(playersState),
     playersChosenSkill: 0,
     playersReviewedTurn: 0
+  })
+
+  await fb('detectives/cost').set({
+    health: 30,
+    intent: 38,
+    profession: 30
   })
 
   await fb('turns/currentTurn').set(1)

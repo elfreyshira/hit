@@ -96,7 +96,7 @@ export const PROFESSIONS = {
 
     type: 'SUPPORT',
     startingHealth: 17,
-    possibleSkills: ['HIT_2', 'HEAL_2']
+    possibleSkills: ['HIT_2', 'SUPPORT_HEAL_2']
   },
 
   SUPPORT_HEAL_NORMAL_MED: {
@@ -106,7 +106,7 @@ export const PROFESSIONS = {
 
     type: 'SUPPORT',
     startingHealth: 14,
-    possibleSkills: ['HIT_2', 'HEAL_3']
+    possibleSkills: ['HIT_2', 'SUPPORT_HEAL_3']
   },
 
   SUPPORT_HEAL_NORMAL_HIGH: {
@@ -116,7 +116,7 @@ export const PROFESSIONS = {
 
     type: 'SUPPORT',
     startingHealth: 11,
-    possibleSkills: ['HIT_2', 'HEAL_4']
+    possibleSkills: ['HIT_2', 'SUPPORT_HEAL_4']
   },
 
   SUPPORT_HEAL_SELF_DAMAGE: {
@@ -127,7 +127,7 @@ export const PROFESSIONS = {
 
     type: 'SUPPORT',
     startingHealth: 20,
-    possibleSkills: ['HIT_2', 'HEAL_SACRIFICE_2','HEAL_SACRIFICE_3','HEAL_SACRIFICE_4']
+    possibleSkills: ['HIT_2', 'SUPPORT_HEAL_SACRIFICE_2','SUPPORT_HEAL_SACRIFICE_3','SUPPORT_HEAL_SACRIFICE_4']
   },
 }
 
@@ -187,16 +187,16 @@ export const SKILLS = {
   HIT_2: createHitSkillObj(2),
   HIT_3: createHitSkillObj(3),
   HIT_4: createHitSkillObj(4),
-  HEAL_2: createHealSkillObj(2),
-  HEAL_3: createHealSkillObj(3),
-  HEAL_4: createHealSkillObj(4),
+  SUPPORT_HEAL_2: createHealSkillObj(2),
+  SUPPORT_HEAL_3: createHealSkillObj(3),
+  SUPPORT_HEAL_4: createHealSkillObj(4),
   HIT_SACRIFICE_1: createHitSacrificeSkillObj(1),
   HIT_SACRIFICE_2: createHitSacrificeSkillObj(2),
   HIT_SACRIFICE_3: createHitSacrificeSkillObj(3),
   HIT_SACRIFICE_4: createHitSacrificeSkillObj(4),
-  HEAL_SACRIFICE_2: createHealSacrificeSkillObj(2),
-  HEAL_SACRIFICE_3: createHealSacrificeSkillObj(3),
-  HEAL_SACRIFICE_4: createHealSacrificeSkillObj(4)
+  SUPPORT_HEAL_SACRIFICE_2: createHealSacrificeSkillObj(2),
+  SUPPORT_HEAL_SACRIFICE_3: createHealSacrificeSkillObj(3),
+  SUPPORT_HEAL_SACRIFICE_4: createHealSacrificeSkillObj(4)
 }
 
 // all of these functions write to newPlayersState

@@ -2,10 +2,10 @@ import firebase from 'firebase'
 import _ from 'lodash'
 
 import getRoomID from '../util/getRoomID'
-import { PROFESSIONS, SKILLS, HIT_FILTERS, POST_TURN_STEPS } from '../util/professions'
 
 import fb from './fb'
 import startGame from './startGame'
+import performAllSkills from './performAllSkills'
 
 var config = {
   apiKey: "AIzaSyBQhxIPIgzp236kPKFRt6AqrB69tE9I3YM",
@@ -26,15 +26,20 @@ firebase.initializeApp(config)
 // });
 
 const possibleCharacters = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'.split('')
-function create4CharacterID () {
-  return _.times(4, _.partial(_.sample, possibleCharacters)).join('')
+const getRandomChar = _.partial(_.sample, possibleCharacters)
+function createSimpleID (numberOfCharacters) {
+  return _.times(numberOfCharacters || 4, getRandomChar).join('')
 }
 
 async function addPlayer (payload) {
   const {name} = payload
-  const playerId = create4CharacterID()
+  const playerId = createSimpleID(4)
 
-  await fb('players', playerId, 'name').set(name)
+  await fb('players', playerId).set({
+    name,
+    id: playerId,
+    money: 100
+  })
   return playerId
 }
 
@@ -63,88 +68,27 @@ async function queueSkill (payload) {
   
 }
 
-async function performAllSkills () {
-  const currentTurn = (await fb('turns/currentTurn').once('value')).val()
-  const queuedSkills = (await fb('turns', 'turn' + currentTurn).once('value')).val()
-
-  const oldPlayersState = (await fb('players').once('value')).val()
-  const newPlayersState = _.cloneDeep(oldPlayersState)
-
-  ////// PERFORM HIT SKILLS AND HIT FILTERS ///////
-  const hitSkills = _.chain(queuedSkills)
-    .values()
-    .filter((skillObj) => (SKILLS[skillObj.skill].type === 'HIT'))
-    .valueOf()
-
-  _.forEach(hitSkills, (skillObj) => {
-    SKILLS[skillObj.skill].doSkill(newPlayersState, skillObj) // write to newPlayersState
-  })
-  _.forEach(oldPlayersState, (playerObj, playerId) => {
-    const hitFilterId = PROFESSIONS[playerObj.profession].hitFilter
-    if (hitFilterId) {
-      HIT_FILTERS[hitFilterId](oldPlayersState, newPlayersState, playerId) // write to newPlayersState
-    }
-  })
-
-  ////// PERFORM HEAL SKILLS ///////
-  const healSkills = _.chain(queuedSkills)
-    .values()
-    .filter((skillObj) => (SKILLS[skillObj.skill].type === 'HEAL'))
-    .valueOf()
-
-  _.forEach(healSkills, (skillObj) => {
-    SKILLS[skillObj.skill].doSkill(newPlayersState, skillObj) // write to newPlayersState
-  })
-
-  ////// PERFORM POST TURN CALCULATIONS ///////
-  _.forEach(oldPlayersState, (playerObj, playerId) => {
-    const postTurnStepId = PROFESSIONS[playerObj.profession].postTurnStep
-    if (postTurnStepId) {
-      POST_TURN_STEPS[postTurnStepId](newPlayersState, playerId) // write to newPlayersState
-    }
-  })
-
-  ////// ANYBODY WHO IS DEAD STAYS DEAD ///////
-  _.forEach(oldPlayersState, (playerObj, playerId) => {
-    if (playerObj.health <= 0) {
-      newPlayersState[playerId].health = 0
-    }
-  })
-
-  await fb('players').update(newPlayersState)
-
-  // check if anybody died
-  _.map(newPlayersState, (newPlayerObj, playerId) => {
-    if (newPlayerObj.health <= 0 && oldPlayersState[playerId].health > 0) {
-      fb('meta/turn/playersAlive').transaction((playersAlive) => (playersAlive - 1))
-    }
-  })
-
-  ////// CHECK IF A TEAM HAS WON //////
-  const playersStateValues = _.values(newPlayersState)
-  const badTeam = _.filter(playersStateValues, {team: 'BAD'})
-  const goodTeam = _.filter(playersStateValues, {team: 'GOOD'})
-  if (badTeam.length === _.filter(badTeam, (playerObj) => playerObj.health <= 0).length) {
-    await fb('status').set('GOOD_VICTORY')
-  }
-  else if (goodTeam.length === _.filter(goodTeam, (playerObj) => playerObj.health <= 0).length) {
-    await fb('status').set('BAD_VICTORY')
-  }
-  else {
-    await fb('status').set('REVIEW_TURN')
-  }
-}
-global.performAllSkills = performAllSkills
-
-
-async function moveToNextTurn () {
+async function moveToNextTurn (playersAlive) {
   await fb('meta/turn').update({playersChosenSkill: 0, playersReviewedTurn: 0})
 
   const currentTurn = (await fb('turns/currentTurn').once('value')).val()
 
-  // remove moves from current term to keep payload small
-  fb('turns', 'turn' + currentTurn).remove() // no need to await
+  // keep the most recent turn history. but remove the previous one to keep data storage small.
+  fb('turns', 'turn' + (currentTurn-1)).remove() // no need to await
 
+  ///// ADJUST DETECTIVE COSTS and remove history for the turn
+  const detectiveObj = (await fb('detectives').once('value')).val()
+  const detectiveCount = _.countBy(detectiveObj.hiredForTheTurn, 'detective')
+  const detectiveCosts = detectiveObj.cost
+  _.forEach(detectiveCosts, (cost, detectiveKey) => {
+    const percentageHired = (detectiveCount[detectiveKey] || 0) / playersAlive * 50 // half the percentage
+    detectiveCosts[detectiveKey] = Math.max(cost - 8 + Math.round(percentageHired), 8) // always cost at least 8
+  })
+  fb('detectives/cost').update(detectiveCosts) // no need to await
+  fb('detectives/hiredForTheTurn').remove() // no need to await
+
+
+  // increment turn
   await fb('turns/currentTurn').transaction((currentTurn) => {
     return _.isNumber(currentTurn) ? currentTurn + 1 : 0
   })
@@ -152,7 +96,7 @@ async function moveToNextTurn () {
 }
 
 async function createNewGame () {
-  const newRoomID = create4CharacterID()
+  const newRoomID = createSimpleID(4)
   window.location.search = 'room=' + newRoomID //+ '&first=true';
 }
 
@@ -171,8 +115,16 @@ async function readyForNextTurn () {
 
   const {playersAlive, playersReviewedTurn} = (await fb('meta/turn').once('value')).val()
   if (playersAlive === playersReviewedTurn) {
-    moveToNextTurn()
+    moveToNextTurn(playersAlive)
   }
+}
+
+async function hireDetective (payload) {
+  const {player, detective, target, cost} = payload
+  fb('detectives/hiredForTheTurn', player).set({detective, target, cost})
+  fb('players', player, 'money').transaction((playerMoney) => {
+    return playerMoney - cost
+  })
 }
 
 const gameState = {
@@ -192,6 +144,17 @@ const gameState = {
       team: 'BAD|GOOD|RENEGADE'
     },
     b234: {}
+  },
+  detectives: {
+    cost: {
+      health: 30,
+      intent: 30,
+      profession: 30
+    },
+    hiredForTheTurn: { // removed after every turn
+      '3NIZ': 'health',
+      'L8XT': 'intent'
+    }
   },
   turns: {
     currentTurn: 1,
@@ -218,5 +181,6 @@ export default {
   onGameStateChange,
   startGame,
   queueSkill,
-  readyForNextTurn
+  readyForNextTurn,
+  hireDetective
 }

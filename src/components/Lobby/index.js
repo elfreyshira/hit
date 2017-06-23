@@ -56,7 +56,6 @@ class Lobby extends Component {
   }
 
   onStartGame = () => {
-    console.log('omg')
     this.setState({shouldHideButton: true})
     actions.startGame()
   }

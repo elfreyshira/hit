@@ -8,7 +8,7 @@
   float: left;
   background-color: #0E75A7;
   border: none;
-  padding: 15px 15px;
+  padding: 12px 15px;
   box-shadow: 1px 1px 2px 1px rgba(0, 0, 0, 0.3);
   color: #fff;
   cursor: pointer;
@@ -16,15 +16,25 @@
   height: 100%;
   transition: transform 0.1s, box-shadow 0.1s, background-color 0.1s;
 }
-  .hit-button:hover, .hit-button:focus {
+  .hit-button:hover:not([disabled]), .hit-button:focus:not([disabled]) {
     background-color: #167cAe;
     transform: scale(1.02, 1.02);
     box-shadow: 2px 2px 2px 2px rgba(0, 0, 0, 0.15);
   }
 
-  .hit-button:active {
+  .hit-button:active:not([disabled]) {
     transition: transform 0.05s, box-shadow 0.05s, background-color 0.05s;
     background-color: #0A71A3;
     transform: scale(0.99, 0.99);
     box-shadow: inset 2px 2px 3px 1px rgba(0, 0, 0, 0.3)
+  }
+  .hit-button[disabled] {
+    background-color: #bbb;
+    color: #eee;
+    cursor: not-allowed;
+    box-shadow: none;
+  }
+  .hit-button.small {
+    font-size: 12px;
+    padding: 8px 10px;
   }

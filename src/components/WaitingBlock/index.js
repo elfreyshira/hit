@@ -41,6 +41,9 @@ class WaitingBlock extends Component {
     appState: React.PropTypes.object
   }
 
+  // so the images don't reload on every app state update
+  chosenImage = _.sample(waitingImages)
+
   render () {
     const {playersAlive, playersChosenSkill, playersReviewedTurn} = this.props.appState.gameState.meta.turn
     let numberWaitingFor
@@ -64,7 +67,7 @@ class WaitingBlock extends Component {
         {waitingText}
         <img
           style={{maxWidth: '100%', maxHeight: '95vh'}}
-          src={_.sample(waitingImages)}
+          src={this.chosenImage}
         />
       </div>
     )

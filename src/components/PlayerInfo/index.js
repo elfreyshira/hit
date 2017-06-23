@@ -8,6 +8,10 @@ const TEAM_NAMES = {
   GOOD: 'Good Rebel Forces -- defend against the secret hitmen among you'
 }
 
+function Cur () {
+  return <span style={{color: '#555', marginRight: '1px'}}>{'\u20B4'}</span>
+}
+
 class PlayerInfo extends Component {
 
   static propTypes = {
@@ -38,6 +42,7 @@ class PlayerInfo extends Component {
         <p>Profession: {PROFESSIONS[playerObj.profession].name}</p>
         <p>Description: {PROFESSIONS[playerObj.profession].description}</p>
         <p>Health: {Math.max(playerObj.health, 0)} / {playerObj.maxHealth}</p>
+        <p>Money: <Cur />{Math.max(playerObj.money, 0)}</p>
         <p>Team: {TEAM_NAMES[playerObj.team]}</p>
         {this.renderEvilTeammates()}
       </div>
