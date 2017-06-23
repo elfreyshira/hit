@@ -152,8 +152,11 @@ const gameState = {
       profession: 30
     },
     hiredForTheTurn: { // removed after every turn
-      '3NIZ': 'health',
-      'L8XT': 'intent'
+      '3NIZ': {
+        detective: 'health',
+        target: '39LK',
+        cost: 22
+      }
     }
   },
   turns: {
