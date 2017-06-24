@@ -22,7 +22,7 @@ class Button extends Component {
           <button
             className={'hit-button ' + size}
             disabled={!!this.props.disabled}
-            {..._.omit(this.props, ['wrapperStyle', 'hidden'])}
+            {..._.omit(this.props, ['wrapperStyle', 'hidden', 'size'])}
           >
             {this.props.children}
           </button>
