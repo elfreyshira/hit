@@ -47,8 +47,9 @@ class Lobby extends Component {
           <hr/>
           <label>
             Enter your name (make sure others will recognize it's you): &nbsp;
-            <input type="text" placeholder="Name" ref="name" />
+            <input type="text" placeholder="Name" ref="name" required />
           </label>
+          <input type="submit" style={{visibility: 'hidden', position: 'absolute'}} />
           <Button type="submit">Join game</Button>
         </form>
       )
