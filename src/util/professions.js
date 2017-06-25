@@ -82,11 +82,12 @@ export const PROFESSIONS = {
   ASSASSIN_HIT_SELF_DAMAGE: {
     name: 'Hidan',
     quote: `Now! Let's savour the utmost of suffering together!`,
-    description: 'You can hit somebody for between 1-4 damage, but you lose an equal amount of health.',
+    description: `You can hit somebody for between 2-4 damage,
+      but you lose health equal to one less than what you hit for.`,
 
     type: 'ASSASSIN',
     startingHealth: 20,
-    possibleSkills: ['HIT_SACRIFICE_1', 'HIT_SACRIFICE_2','HIT_SACRIFICE_3','HIT_SACRIFICE_4']
+    possibleSkills: ['HIT_SACRIFICE_2','HIT_SACRIFICE_3','HIT_SACRIFICE_4']
   },
 
   SUPPORT_HEAL_NORMAL_LOW: {
@@ -145,12 +146,12 @@ function createHitSkillObj (hitAmount) {
 
 function createHitSacrificeSkillObj (hitAmount) {
   return {
-    name: 'Hit for ' + hitAmount + ' damage, lose ' + hitAmount + ' health.',
+    name: 'Hit for ' + hitAmount + ' damage, lose ' + (hitAmount - 1) + ' health.',
     type: 'HIT',
     doSkill (playersState, payload) {
       const {player, target} = payload
       playersState[target].health = playersState[target].health - hitAmount
-      playersState[player].health = playersState[player].health - hitAmount
+      playersState[player].health = playersState[player].health - (hitAmount - 1)
     }
     // in the future, might have to add a `doSkillSideEffect` step
   }
@@ -190,7 +191,6 @@ export const SKILLS = {
   SUPPORT_HEAL_2: createHealSkillObj(2),
   SUPPORT_HEAL_3: createHealSkillObj(3),
   SUPPORT_HEAL_4: createHealSkillObj(4),
-  HIT_SACRIFICE_1: createHitSacrificeSkillObj(1),
   HIT_SACRIFICE_2: createHitSacrificeSkillObj(2),
   HIT_SACRIFICE_3: createHitSacrificeSkillObj(3),
   HIT_SACRIFICE_4: createHitSacrificeSkillObj(4),
