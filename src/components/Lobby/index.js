@@ -43,7 +43,7 @@ class Lobby extends Component {
   renderJoinForm = () => {
     if (!this.props.appState.player) {
       return (
-        <form onSubmit={this.onJoinGame}>
+        <form onSubmit={this.onJoinGame} action="">
           <hr/>
           <label>
             Enter your name (make sure others will recognize it's you): &nbsp;
