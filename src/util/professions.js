@@ -2,6 +2,7 @@
 // hit filter: hits are checked to adjust damage to the player
 // turn filter: events that happen after all skills are performed
 // different types: tank, assassin, support, special(?)
+import _ from 'lodash'
 
 export const PROFESSIONS = {
   TANK_HEALTH: {
@@ -11,7 +12,7 @@ export const PROFESSIONS = {
 
     type: 'TANK',
     startingHealth: 20,
-    possibleSkills: ['HIT_2']
+    possibleSkills: [ 'DO_NOTHING', 'HIT_LOOT', 'HIT_2']
   },
 
   TANK_ARMOR: {
@@ -21,7 +22,7 @@ export const PROFESSIONS = {
 
     type: 'TANK',
     startingHealth: 14,
-    possibleSkills: ['HIT_2'],
+    possibleSkills: [ 'DO_NOTHING', 'HIT_LOOT', 'HIT_2'],
     hitFilter: 'NO_MORE_THAN_2'
   },
 
@@ -32,7 +33,7 @@ export const PROFESSIONS = {
 
     type: 'TANK',
     startingHealth: 10,
-    possibleSkills: ['HIT_2'],
+    possibleSkills: [ 'DO_NOTHING', 'HIT_LOOT', 'HIT_2'],
     hitFilter: 'NO_DAMAGE_IF_2_OR_LESS'
   },
 
@@ -43,7 +44,7 @@ export const PROFESSIONS = {
 
     type: 'TANK',
     startingHealth: 12,
-    possibleSkills: ['HIT_2'],
+    possibleSkills: [ 'DO_NOTHING', 'HIT_LOOT', 'HIT_2'],
     postTurnStep: 'HEAL_BY_1'
   },
 
@@ -54,7 +55,7 @@ export const PROFESSIONS = {
 
     type: 'TANK',
     startingHealth: 20,
-    possibleSkills: ['HIT_2'],
+    possibleSkills: [ 'DO_NOTHING', 'HIT_LOOT', 'HIT_2'],
     hitFilter: 'RECEIVE_DOUBLE_DAMAGE',
     postTurnStep: 'HEAL_BY_2'
   },
@@ -66,7 +67,7 @@ export const PROFESSIONS = {
 
     type: 'ASSASSIN',
     startingHealth: 13,
-    possibleSkills: ['HIT_2', 'HIT_3']
+    possibleSkills: [ 'DO_NOTHING', 'HIT_LOOT', 'HIT_2', 'HIT_3']
   },
 
   ASSASSIN_NORMAL_HIGH: {
@@ -76,7 +77,7 @@ export const PROFESSIONS = {
 
     type: 'ASSASSIN',
     startingHealth: 10,
-    possibleSkills: ['HIT_2', 'HIT_4']
+    possibleSkills: [ 'DO_NOTHING', 'HIT_LOOT', 'HIT_2', 'HIT_4']
   },
 
   ASSASSIN_HIT_SELF_DAMAGE: {
@@ -87,7 +88,7 @@ export const PROFESSIONS = {
 
     type: 'ASSASSIN',
     startingHealth: 20,
-    possibleSkills: ['HIT_SACRIFICE_2','HIT_SACRIFICE_3','HIT_SACRIFICE_4']
+    possibleSkills: [ 'DO_NOTHING', 'HIT_LOOT', 'HIT_SACRIFICE_2','HIT_SACRIFICE_3','HIT_SACRIFICE_4']
   },
 
   SUPPORT_HEAL_NORMAL_LOW: {
@@ -97,7 +98,7 @@ export const PROFESSIONS = {
 
     type: 'SUPPORT',
     startingHealth: 17,
-    possibleSkills: ['HIT_2', 'SUPPORT_HEAL_2']
+    possibleSkills: [ 'DO_NOTHING', 'HIT_LOOT', 'HIT_2', 'SUPPORT_HEAL_2']
   },
 
   SUPPORT_HEAL_NORMAL_MED: {
@@ -107,7 +108,7 @@ export const PROFESSIONS = {
 
     type: 'SUPPORT',
     startingHealth: 14,
-    possibleSkills: ['HIT_2', 'SUPPORT_HEAL_3']
+    possibleSkills: [ 'DO_NOTHING', 'HIT_LOOT', 'HIT_2', 'SUPPORT_HEAL_3']
   },
 
   SUPPORT_HEAL_NORMAL_HIGH: {
@@ -117,7 +118,7 @@ export const PROFESSIONS = {
 
     type: 'SUPPORT',
     startingHealth: 11,
-    possibleSkills: ['HIT_2', 'SUPPORT_HEAL_4']
+    possibleSkills: [ 'DO_NOTHING', 'HIT_LOOT', 'HIT_2', 'SUPPORT_HEAL_4']
   },
 
   SUPPORT_HEAL_SELF_DAMAGE: {
@@ -128,7 +129,7 @@ export const PROFESSIONS = {
 
     type: 'SUPPORT',
     startingHealth: 20,
-    possibleSkills: ['HIT_2', 'SUPPORT_HEAL_SACRIFICE_2','SUPPORT_HEAL_SACRIFICE_3','SUPPORT_HEAL_SACRIFICE_4']
+    possibleSkills: [ 'DO_NOTHING', 'HIT_LOOT', 'HIT_2', 'SUPPORT_HEAL_SACRIFICE_2','SUPPORT_HEAL_SACRIFICE_3','SUPPORT_HEAL_SACRIFICE_4']
   },
 }
 
@@ -185,6 +186,24 @@ function createHealSacrificeSkillObj (healAmount) {
 
 
 export const SKILLS = {
+  DO_NOTHING: {
+    name: "Do nothing and make 10 money.",
+    type: 'NOTHING',
+    doSkill (playersState, payload) {
+      const {player, target} = payload
+      playersState[player].money = playersState[target].money + 10
+    }
+  },
+  HIT_LOOT: {
+    name: "Steal somebody else's money.",
+    type: 'NOTHING',
+    doSkill (playersState, payload) {
+      const {player, target} = payload
+      const stolenAmount = _.random(8, 12)
+      playersState[player].money = playersState[player].money + stolenAmount
+      playersState[target].money = playersState[target].money - stolenAmount
+    }
+  },
   HIT_2: createHitSkillObj(2),
   HIT_3: createHitSkillObj(3),
   HIT_4: createHitSkillObj(4),
