@@ -38,7 +38,7 @@ async function addPlayer (payload) {
   await fb('players', playerId).set({
     name,
     id: playerId,
-    money: 90 // starting money amount
+    money: 100 // starting money amount
   })
   return playerId
 }
@@ -149,7 +149,9 @@ const gameState = {
     cost: {
       health: 30,
       intent: 30,
-      profession: 30
+      profession: 30,
+      money: 20,
+      team: 130
     },
     hiredForTheTurn: { // removed after every turn
       '3NIZ': {

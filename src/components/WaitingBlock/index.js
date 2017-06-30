@@ -55,8 +55,8 @@ class WaitingBlock extends Component {
     }
 
     let waitingText
-    if (numberWaitingFor === 0) {
-      waitingText = <h4>Waiting for the server...'</h4>
+    if (numberWaitingFor === 0 || numberWaitingFor === playersAlive) {
+      waitingText = <h4>Waiting for the server...</h4>
     }
     else {
       waitingText = <h4>Waiting for {numberWaitingFor} other player{numberWaitingFor === 1 ? '' : 's'}...</h4>

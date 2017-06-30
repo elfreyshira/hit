@@ -75,7 +75,9 @@ export default async function startGame () {
   await fb('detectives/cost').set({
     health: 30,
     intent: 38,
-    profession: 30
+    profession: 30,
+    money: 20,
+    team: 130
   })
 
   await fb('turns/currentTurn').set(1)

@@ -53,6 +53,9 @@ class GameOver extends Component {
     else if (victoryStatus === 'GOOD_VICTORY') {
       victoryText = 'The evil hitmen are dead. Congrats, the rebel forces stand strong!'
     }
+    else if (victoryStatus === 'TIE_VICTORY') {
+      victoryText = 'Both teams were eliminated simultaneously. You all lose.'
+    }
 
     return (
       <div>

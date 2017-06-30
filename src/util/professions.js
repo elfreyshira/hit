@@ -12,7 +12,7 @@ export const PROFESSIONS = {
 
     type: 'TANK',
     startingHealth: 20,
-    possibleSkills: [ 'DO_NOTHING', 'HIT_LOOT', 'HIT_2']
+    possibleSkills: ['HIT_LOOT', 'HIT_2']
   },
 
   TANK_ARMOR: {
@@ -22,7 +22,7 @@ export const PROFESSIONS = {
 
     type: 'TANK',
     startingHealth: 14,
-    possibleSkills: [ 'DO_NOTHING', 'HIT_LOOT', 'HIT_2'],
+    possibleSkills: ['HIT_LOOT', 'HIT_2'],
     hitFilter: 'NO_MORE_THAN_2'
   },
 
@@ -33,7 +33,7 @@ export const PROFESSIONS = {
 
     type: 'TANK',
     startingHealth: 10,
-    possibleSkills: [ 'DO_NOTHING', 'HIT_LOOT', 'HIT_2'],
+    possibleSkills: ['HIT_LOOT', 'HIT_2'],
     hitFilter: 'NO_DAMAGE_IF_2_OR_LESS'
   },
 
@@ -43,21 +43,21 @@ export const PROFESSIONS = {
     description: `You recover 1 health every turn.`,
 
     type: 'TANK',
-    startingHealth: 12,
-    possibleSkills: [ 'DO_NOTHING', 'HIT_LOOT', 'HIT_2'],
+    startingHealth: 13,
+    possibleSkills: ['HIT_LOOT', 'HIT_2'],
     postTurnStep: 'HEAL_BY_1'
   },
 
   TANK_DOUBLE_DAMAGE_HEAL: {
     name: 'Mammoth',
     quote: 'Tis just a flesh wound.',
-    description: `You receive double hit damage, but you recover 2 health every turn.`,
+    description: `You receive double hit damage, but you recover 3 health every turn.`,
 
     type: 'TANK',
-    startingHealth: 20,
-    possibleSkills: [ 'DO_NOTHING', 'HIT_LOOT', 'HIT_2'],
+    startingHealth: 18,
+    possibleSkills: ['HIT_LOOT', 'HIT_2'],
     hitFilter: 'RECEIVE_DOUBLE_DAMAGE',
-    postTurnStep: 'HEAL_BY_2'
+    postTurnStep: 'HEAL_BY_3'
   },
 
   ASSASSIN_NORMAL_LOW: {
@@ -67,7 +67,7 @@ export const PROFESSIONS = {
 
     type: 'ASSASSIN',
     startingHealth: 13,
-    possibleSkills: [ 'DO_NOTHING', 'HIT_LOOT', 'HIT_2', 'HIT_3']
+    possibleSkills: ['HIT_LOOT', 'HIT_2', 'HIT_3']
   },
 
   ASSASSIN_NORMAL_HIGH: {
@@ -77,7 +77,7 @@ export const PROFESSIONS = {
 
     type: 'ASSASSIN',
     startingHealth: 10,
-    possibleSkills: [ 'DO_NOTHING', 'HIT_LOOT', 'HIT_2', 'HIT_4']
+    possibleSkills: ['HIT_LOOT', 'HIT_2', 'HIT_4']
   },
 
   ASSASSIN_HIT_SELF_DAMAGE: {
@@ -88,7 +88,7 @@ export const PROFESSIONS = {
 
     type: 'ASSASSIN',
     startingHealth: 20,
-    possibleSkills: [ 'DO_NOTHING', 'HIT_LOOT', 'HIT_SACRIFICE_2','HIT_SACRIFICE_3','HIT_SACRIFICE_4']
+    possibleSkills: ['HIT_LOOT', 'HIT_SACRIFICE_2','HIT_SACRIFICE_3','HIT_SACRIFICE_4']
   },
 
   SUPPORT_HEAL_NORMAL_LOW: {
@@ -98,7 +98,7 @@ export const PROFESSIONS = {
 
     type: 'SUPPORT',
     startingHealth: 17,
-    possibleSkills: [ 'DO_NOTHING', 'HIT_LOOT', 'HIT_2', 'SUPPORT_HEAL_2']
+    possibleSkills: ['HIT_LOOT', 'HIT_2', 'SUPPORT_HEAL_2']
   },
 
   SUPPORT_HEAL_NORMAL_MED: {
@@ -108,7 +108,7 @@ export const PROFESSIONS = {
 
     type: 'SUPPORT',
     startingHealth: 14,
-    possibleSkills: [ 'DO_NOTHING', 'HIT_LOOT', 'HIT_2', 'SUPPORT_HEAL_3']
+    possibleSkills: ['HIT_LOOT', 'HIT_2', 'SUPPORT_HEAL_3']
   },
 
   SUPPORT_HEAL_NORMAL_HIGH: {
@@ -118,7 +118,7 @@ export const PROFESSIONS = {
 
     type: 'SUPPORT',
     startingHealth: 11,
-    possibleSkills: [ 'DO_NOTHING', 'HIT_LOOT', 'HIT_2', 'SUPPORT_HEAL_4']
+    possibleSkills: ['HIT_LOOT', 'HIT_2', 'SUPPORT_HEAL_4']
   },
 
   SUPPORT_HEAL_SELF_DAMAGE: {
@@ -129,8 +129,46 @@ export const PROFESSIONS = {
 
     type: 'SUPPORT',
     startingHealth: 20,
-    possibleSkills: [ 'DO_NOTHING', 'HIT_LOOT', 'HIT_2', 'SUPPORT_HEAL_SACRIFICE_2','SUPPORT_HEAL_SACRIFICE_3','SUPPORT_HEAL_SACRIFICE_4']
+    possibleSkills: ['HIT_LOOT', 'HIT_2', 'SUPPORT_HEAL_SACRIFICE_2','SUPPORT_HEAL_SACRIFICE_3','SUPPORT_HEAL_SACRIFICE_4']
   },
+
+  // SPECIAL_WEALTH_HIGH: {
+  //   name: 'Seto Kaiba',
+  //   quote: `Screw the rules, I've got money.`,
+  //   description: `You start with \u20B4200. Use it before you lose it.`,
+
+  //   type: 'SPECIAL',
+  //   startingHealth: 10,
+  //   startingMoney: 200,
+  //   possibleSkills: ['HIT_LOOT', 'HIT_2']
+  // },
+
+  // SPECIAL_WEALTH_MED: {
+  //   name: 'Snoop Dawg',
+  //   quote: `If the ride is more fly, then you must buy.`,
+  //   description: `You start with \u20B4150.`,
+
+  //   type: 'SPECIAL',
+  //   startingHealth: 15,
+  //   startingMoney: 150,
+  //   possibleSkills: ['HIT_LOOT', 'HIT_2']
+  // },
+
+  // SPECIAL_WEALTH_REGEN: {
+  //   name: 'Mahk Zuckahbahg',
+  //   quote: `CEO`,
+  //   description: `You gain \u20B410 per turn.`,
+
+  //   type: 'SPECIAL',
+  //   startingHealth: 12,
+  //   startingMoney: 100,
+  //   possibleSkills: ['HIT_LOOT', 'HIT_2'],
+  //   postTurnStep: 'MONEY_BY_10'
+  // }
+
+  // other possible specials:
+  // - if somebody hits a target, the hitter receives 2-3 damage
+  // - copy other people's moves
 }
 
 
@@ -186,22 +224,23 @@ function createHealSacrificeSkillObj (healAmount) {
 
 
 export const SKILLS = {
-  DO_NOTHING: {
-    name: "Do nothing and make 10 money.",
-    type: 'NOTHING',
-    doSkill (playersState, payload) {
-      const {player, target} = payload
-      playersState[player].money = playersState[target].money + 10
-    }
-  },
+  // DO_NOTHING: {
+  //   name: "Do nothing and make \u20B47.",
+  //   type: 'HIT',
+  //   doSkill (playersState, payload) {
+  //     const {player, target} = payload
+  //     playersState[player].money = playersState[player].money + 7
+  //   }
+  // },
   HIT_LOOT: {
-    name: "Steal somebody else's money.",
-    type: 'NOTHING',
+    name: "Hit for 1 damage and steal \u20B45-\u20B410.",
+    type: 'HIT',
     doSkill (playersState, payload) {
       const {player, target} = payload
-      const stolenAmount = _.random(8, 12)
+      const stolenAmount = _.random(5, 10)
       playersState[player].money = playersState[player].money + stolenAmount
       playersState[target].money = playersState[target].money - stolenAmount
+      playersState[target].health = playersState[target].health - 1
     }
   },
   HIT_2: createHitSkillObj(2),
@@ -248,7 +287,7 @@ function createHealBy (amountHealed) {
 
 export const POST_TURN_STEPS = {
   HEAL_BY_1: createHealBy(1),
-  HEAL_BY_2: createHealBy(2)
+  HEAL_BY_3: createHealBy(3)
 }
 
 export default {

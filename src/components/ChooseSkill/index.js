@@ -76,10 +76,11 @@ class ChooseSkill extends Component {
     evt.preventDefault()
     this.setState({chosenSkillId: null})
   }
+  shuffleTargets = _.once(_.shuffle)
   renderTargetList = () => {
     if (this.state.chosenSkillId && !this.hasChosenSkillAndTarget()) {
-      const targetButtons = _.chain(this.props.appState.gameState.players)
-        .map((targetObj, targetId) => {
+      const targetButtons = this.shuffleTargets( // mix up the targets to avoid bias
+        _.map(this.props.appState.gameState.players, (targetObj, targetId) => {
           if (targetId === this.props.appState.player || targetObj.health <= 0) {
             // don't show target if it's self or if target is dead
             return null
@@ -97,8 +98,7 @@ class ChooseSkill extends Component {
             )
           }
         })
-        .shuffle() // mix up the targets to avoid bias
-        .valueOf()
+      )
 
       const currentTurn = this.props.appState.gameState.turns.currentTurn
       return (

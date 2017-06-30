@@ -73,7 +73,9 @@ class App extends Component {
   }
 
   isGameOver () {
-    return this.state.gameState.status === 'BAD_VICTORY' || this.state.gameState.status === 'GOOD_VICTORY'
+    return this.state.gameState.status === 'BAD_VICTORY'
+      || this.state.gameState.status === 'GOOD_VICTORY'
+      || this.state.gameState.status === 'TIE_VICTORY'
   }
   renderGameOver () {
     if (this.isGameOver()) {

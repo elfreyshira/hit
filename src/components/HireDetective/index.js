@@ -7,10 +7,7 @@ import { PROFESSIONS, SKILLS } from '../../util/professions'
 import Button from '../Button'
 import PlayerInfo from '../PlayerInfo'
 import WaitingBlock from '../WaitingBlock'
-
-function Cur () {
-  return <span style={{color: '#ddd', marginRight: '1px'}}>{'\u20B4'}</span>
-}
+import Cur from '../Cur'
 
 class HireDetective extends Component {
 
@@ -30,6 +27,8 @@ class HireDetective extends Component {
   onInvestigateHealth = _.partial(this.onHireDetective, 'health')
   onInvestigateProfession = _.partial(this.onHireDetective, 'profession')
   onInvestigateIntent = _.partial(this.onHireDetective, 'intent')
+  onInvestigateMoney = _.partial(this.onHireDetective, 'money')
+  onInvestigateTeam = _.partial(this.onHireDetective, 'team')
 
   hasHiredDetectiveWithTarget () {
     return _.has(this.props.appState.gameState.detectives.hiredForTheTurn, this.props.appState.player)
@@ -58,11 +57,25 @@ class HireDetective extends Component {
             Profession: <Cur/>{detectiveCosts.profession}
           </Button>
           <Button
+            onClick={this.onInvestigateMoney}
+            size="small"
+            disabled={detectiveCosts.money > playerMoney}
+          >
+            Money: <Cur/>{detectiveCosts.money}
+          </Button>
+          <Button
             onClick={this.onInvestigateIntent}
             size="small"
             disabled={currentTurn <= 1 || detectiveCosts.intent > playerMoney}
           >
             Intent from previous turn: <Cur/>{detectiveCosts.intent}
+          </Button>
+          <Button
+            onClick={this.onInvestigateTeam}
+            size="small"
+            disabled={detectiveCosts.team > playerMoney}
+          >
+            Team: <Cur/>{detectiveCosts.team}
           </Button>
         </div>
       )
@@ -83,11 +96,11 @@ class HireDetective extends Component {
       cost: this.props.appState.gameState.detectives.cost[this.state.chosenDetective]
     })
   }
-
+  shuffleTargets = _.once(_.shuffle)
   renderTargetList = () => { // originally c/p from ChooseSkill
     if (this.state.chosenDetective && !this.hasHiredDetectiveWithTarget()) {
-      const targetButtons = _.chain(this.props.appState.gameState.players)
-        .map((targetObj, targetId) => {
+      const targetButtons = this.shuffleTargets( // mix up the targets to avoid bias
+        _.map(this.props.appState.gameState.players, (targetObj, targetId) => {
           if (targetId === this.props.appState.player || targetObj.health <= 0) {
             // don't show target if it's self or if target is dead
             return null
@@ -106,8 +119,7 @@ class HireDetective extends Component {
             )
           }
         })
-        .shuffle() // mix up the targets to avoid bias
-        .valueOf()
+      )
 
       return (
         <div>
@@ -155,8 +167,6 @@ class HireDetective extends Component {
       else if (detective === 'intent') {
         const currentTurn = this.props.appState.gameState.turns.currentTurn
 
-        console.log('this.props.appState.gameState.turns[currentTurn-1]')
-        console.log(this.props.appState.gameState.turns[currentTurn-1])
         const turnObj = _.find(
           this.props.appState.gameState.turns['turn' + (currentTurn-1)],
           {player: target}
@@ -177,6 +187,21 @@ class HireDetective extends Component {
             In turn {currentTurn-1}, {targetName} attempted to {skillIntention} {skillTargetName}
           </span>
         )
+      }
+      else if (detective === 'money') {
+        const targetMoney = this.props.appState.gameState.players[target].money
+        investigationText = <span>{targetName} currently has <Cur bg="light" />{targetMoney}</span>
+      }
+      else if (detective === 'team') {
+        const targetTeam = this.props.appState.gameState.players[target].team
+        let teamText
+        if (targetTeam === 'GOOD') {
+          teamText = 'Good rebel forces'
+        }
+        else if (targetTeam === 'BAD') {
+          teamText = 'Evil hitmen'
+        }
+        investigationText = <span>{targetName}'s team: {teamText}</span>
       }
 
       return (
