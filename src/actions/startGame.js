@@ -9,7 +9,7 @@ function assignTeamsAndProfessions2 (playersState) {
 
   // shuffle team assignments
   const numberOfPlayers = _.size(playersState)
-  const numberOnBadTeam = Math.round(numberOfPlayers/3)
+  const numberOnBadTeam = Math.round(numberOfPlayers * 0.4)
   const numberOnGoodTeam = numberOfPlayers - numberOnBadTeam
   const assignedTeams = _.shuffle(
     _.times(numberOnBadTeam, _.constant('BAD'))
@@ -145,7 +145,7 @@ export default async function startGame () {
     intent: 38,
     profession: 30,
     money: 20,
-    team: 130
+    team: 150
   })
 
   await fb('turns/currentTurn').set(1)

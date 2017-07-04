@@ -8,14 +8,22 @@ import fb from './fb'
 import startGame from './startGame'
 import performAllSkills from './performAllSkills'
 
+// var config = {
+//   apiKey: "AIzaSyBQhxIPIgzp236kPKFRt6AqrB69tE9I3YM",
+//   authDomain: "hit-game.firebaseapp.com",
+//   databaseURL: "https://hit-game.firebaseio.com",
+//   projectId: "hit-game",
+//   storageBucket: "hit-game.appspot.com",
+//   messagingSenderId: "529926024736"
+// }
 var config = {
-  apiKey: "AIzaSyBQhxIPIgzp236kPKFRt6AqrB69tE9I3YM",
-  authDomain: "hit-game.firebaseapp.com",
-  databaseURL: "https://hit-game.firebaseio.com",
-  projectId: "hit-game",
-  storageBucket: "hit-game.appspot.com",
-  messagingSenderId: "529926024736"
-};
+  apiKey: "AIzaSyDrkXOwfrRJ_K6UyAOzfGyVnbgAVwP9RPE",
+  authDomain: "thinkfast-41d88.firebaseapp.com",
+  databaseURL: "https://thinkfast-41d88.firebaseio.com",
+  projectId: "thinkfast-41d88",
+  storageBucket: "thinkfast-41d88.appspot.com",
+  messagingSenderId: "251919933131"
+}
 firebase.initializeApp(config)
 
 
@@ -24,7 +32,7 @@ firebase.initializeApp(config)
 //   if (roomID) {
 //     fb('rooms', getRoomID()).remove()
 //   }
-// });
+// })
 
 const possibleCharacters = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'.split('')
 const getRandomChar = _.partial(_.sample, possibleCharacters)
@@ -55,11 +63,11 @@ async function queueSkill (payload) {
     return _.isNumber(playersChosenSkill) ? playersChosenSkill + 1 : 0
   })
 
-  await fb('turns', 'turn' + currentTurn).push({
-    player,
-    target,
-    skill
-  })
+  const skillObj = {player, skill}
+  if (target) {
+    skillObj.target = target
+  }
+  await fb('turns', 'turn' + currentTurn).push(skillObj)
 
   const {playersAlive, playersChosenSkill} = (await fb('meta/turn').once('value')).val()
   if (playersAlive === playersChosenSkill) {
@@ -174,7 +182,7 @@ const gameState = {
       intent: 30,
       profession: 30,
       money: 20,
-      team: 130
+      team: 150
     },
     hiredForTheTurn: { // removed after every turn
       '3NIZ': {

@@ -34,10 +34,7 @@ class ChooseProfession extends Component {
   render () {
     const playerId = this.props.appState.player
 
-    if (this.props.appState.gameState.players[playerId].profession) {
-      return <WaitingBlock appState={this.props.appState} />
-    }
-    else if (this.props.appState.gameState.players[playerId].professionChoices) {
+    if (this.props.appState.gameState.players[playerId].professionChoices) {
       const professionId1 = this.props.appState.gameState.players[playerId].professionChoices[0]
       const professionObj1 = PROFESSIONS[professionId1]
 
@@ -65,6 +62,9 @@ class ChooseProfession extends Component {
           <Button onClick={() => this.onChooseProfession(professionId2)}>{professionObj2.name}</Button>
         </div>
       )
+    }
+    else { // if this.props.appState.gameState.players[playerId].profession exists
+      return <WaitingBlock appState={this.props.appState} />
     }
   }
 }

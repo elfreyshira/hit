@@ -172,14 +172,21 @@ class HireDetective extends Component {
           {player: target}
         )
 
-        const skillTargetName = this.props.appState.gameState.players[turnObj.target].name
-        
-        let skillIntention
-        if (_.startsWith(turnObj.skill, 'HIT')) {
-          skillIntention = 'hit'
+        const skillTargetPlayerObj = this.props.appState.gameState.players[turnObj.target]
+        let skillTargetName = ''
+        if (skillTargetPlayerObj) {
+          skillTargetName = skillTargetPlayerObj.name
         }
-        else if (_.startsWith(turnObj.skill, 'SUPPORT')) {
+
+        let skillIntention
+        if (SKILLS[turnObj.skill].type === 'ATTACK') {
+          skillIntention = 'attack'
+        }
+        else if (SKILLS[turnObj.skill].type === 'SUPPORT') {
           skillIntention = 'support'
+        }
+        else if (SKILLS[turnObj.skill].type === 'INNOCENT') {
+          skillIntention = `defecate in the toilet but missed`
         }
 
         investigationText = (

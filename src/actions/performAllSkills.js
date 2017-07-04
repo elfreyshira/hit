@@ -14,7 +14,7 @@ export default async function performAllSkills () {
   ////// PERFORM HIT SKILLS AND HIT FILTERS ///////
   const hitSkills = _.chain(queuedSkills)
     .values()
-    .filter((skillObj) => (SKILLS[skillObj.skill].type === 'HIT'))
+    .filter((skillObj) => (SKILLS[skillObj.skill].step === 'HIT'))
     .valueOf()
 
   _.forEach(hitSkills, (skillObj) => {
@@ -30,10 +30,20 @@ export default async function performAllSkills () {
   ////// PERFORM HEAL SKILLS ///////
   const healSkills = _.chain(queuedSkills)
     .values()
-    .filter((skillObj) => (SKILLS[skillObj.skill].type === 'HEAL'))
+    .filter((skillObj) => (SKILLS[skillObj.skill].step === 'HEAL'))
     .valueOf()
 
   _.forEach(healSkills, (skillObj) => {
+    SKILLS[skillObj.skill].doSkill(newPlayersState, skillObj) // write to newPlayersState
+  })
+
+  ////// PERFORM NO_TARGET SKILLS ///////
+  const targetlessSkills = _.chain(queuedSkills)
+    .values()
+    .filter((skillObj) => (SKILLS[skillObj.skill].step === 'NO_TARGET'))
+    .valueOf()
+
+  _.forEach(targetlessSkills, (skillObj) => {
     SKILLS[skillObj.skill].doSkill(newPlayersState, skillObj) // write to newPlayersState
   })
 

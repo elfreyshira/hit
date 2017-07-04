@@ -12,7 +12,17 @@ export const PROFESSIONS = {
 
     type: 'TANK',
     startingHealth: 20,
-    possibleSkills: ['HIT_LOOT', 'HIT_2']
+    possibleSkills: ['DO_NOTHING', 'HIT_LOOT', 'HIT_2']
+  },
+
+  TANK_SELF_HEAL: {
+    name: 'Shellfish',
+    quote: "ME TANK. YOU HIT.",
+    description: `You can heal yourself for 2 health.`,
+
+    type: 'TANK',
+    startingHealth: 16,
+    possibleSkills: ['DO_NOTHING', 'HIT_LOOT', 'HIT_2', 'DO_SELF_HEAL_2']
   },
 
   TANK_ARMOR: {
@@ -22,7 +32,7 @@ export const PROFESSIONS = {
 
     type: 'TANK',
     startingHealth: 12,
-    possibleSkills: ['HIT_LOOT', 'HIT_2'],
+    possibleSkills: ['DO_NOTHING', 'HIT_LOOT', 'HIT_2'],
     hitFilter: 'NO_MORE_THAN_2'
   },
 
@@ -32,8 +42,8 @@ export const PROFESSIONS = {
     description: `If you receive 2 or less damage in a turn, it's negated.`,
 
     type: 'TANK',
-    startingHealth: 10,
-    possibleSkills: ['HIT_LOOT', 'HIT_2'],
+    startingHealth: 12,
+    possibleSkills: ['DO_NOTHING', 'HIT_LOOT', 'HIT_2'],
     hitFilter: 'NO_DAMAGE_IF_2_OR_LESS'
   },
 
@@ -44,7 +54,7 @@ export const PROFESSIONS = {
 
     type: 'TANK',
     startingHealth: 13,
-    possibleSkills: ['HIT_LOOT', 'HIT_2'],
+    possibleSkills: ['DO_NOTHING', 'HIT_LOOT', 'HIT_2'],
     postTurnStep: 'HEAL_BY_1'
   },
 
@@ -55,7 +65,7 @@ export const PROFESSIONS = {
 
     type: 'TANK',
     startingHealth: 18,
-    possibleSkills: ['HIT_LOOT', 'HIT_2'],
+    possibleSkills: ['DO_NOTHING', 'HIT_LOOT', 'HIT_2'],
     hitFilter: 'RECEIVE_DOUBLE_DAMAGE',
     postTurnStep: 'HEAL_BY_3'
   },
@@ -67,7 +77,7 @@ export const PROFESSIONS = {
 
     type: 'ASSASSIN',
     startingHealth: 13,
-    possibleSkills: ['HIT_LOOT', 'HIT_2', 'HIT_3']
+    possibleSkills: ['DO_NOTHING', 'HIT_LOOT', 'HIT_2', 'HIT_3']
   },
 
   ASSASSIN_NORMAL_HIGH: {
@@ -77,18 +87,18 @@ export const PROFESSIONS = {
 
     type: 'ASSASSIN',
     startingHealth: 10,
-    possibleSkills: ['HIT_LOOT', 'HIT_2', 'HIT_4']
+    possibleSkills: ['DO_NOTHING', 'HIT_LOOT', 'HIT_2', 'HIT_4']
   },
 
   ASSASSIN_HIT_SELF_DAMAGE: {
     name: 'Hidan',
     quote: `Now! Let's savour the utmost of suffering together!`,
-    description: `You can hit somebody for between 2-4 damage,
-      but you lose health equal to one less than what you hit for.`,
+    description: `You can hit somebody for 3 or 4 damage,
+      but you lose health equal to 2 less than what you hit for.`,
 
     type: 'ASSASSIN',
-    startingHealth: 20,
-    possibleSkills: ['HIT_LOOT', 'HIT_SACRIFICE_2','HIT_SACRIFICE_3','HIT_SACRIFICE_4']
+    startingHealth: 14,
+    possibleSkills: ['DO_NOTHING', 'HIT_LOOT', 'HIT_2', 'HIT_SACRIFICE_3','HIT_SACRIFICE_4']
   },
 
   SUPPORT_HEAL_NORMAL_LOW: {
@@ -98,7 +108,7 @@ export const PROFESSIONS = {
 
     type: 'SUPPORT',
     startingHealth: 17,
-    possibleSkills: ['HIT_LOOT', 'HIT_2', 'SUPPORT_HEAL_2']
+    possibleSkills: ['DO_NOTHING', 'HIT_LOOT', 'HIT_2', 'SUPPORT_HEAL_2']
   },
 
   SUPPORT_HEAL_NORMAL_MED: {
@@ -108,7 +118,7 @@ export const PROFESSIONS = {
 
     type: 'SUPPORT',
     startingHealth: 14,
-    possibleSkills: ['HIT_LOOT', 'HIT_2', 'SUPPORT_HEAL_3']
+    possibleSkills: ['DO_NOTHING', 'HIT_LOOT', 'HIT_2', 'SUPPORT_HEAL_3']
   },
 
   SUPPORT_HEAL_NORMAL_HIGH: {
@@ -118,53 +128,51 @@ export const PROFESSIONS = {
 
     type: 'SUPPORT',
     startingHealth: 11,
-    possibleSkills: ['HIT_LOOT', 'HIT_2', 'SUPPORT_HEAL_4']
+    possibleSkills: ['DO_NOTHING', 'HIT_LOOT', 'HIT_2', 'SUPPORT_HEAL_4']
   },
 
   SUPPORT_HEAL_SELF_DAMAGE: {
     name: 'The Giver',
     quote: `No pain, no gain.`,
-    description: `You can heal somebody for between 2-4 health,
-      but you lose health equal to one less than what you healed for.`,
+    description: `You can heal somebody for 3 or 4 health,
+      but you lose health equal to 2 less than what you healed for.`,
 
     type: 'SUPPORT',
-    startingHealth: 17,
-    possibleSkills: ['HIT_LOOT', 'HIT_2', 'SUPPORT_HEAL_SACRIFICE_2','SUPPORT_HEAL_SACRIFICE_3','SUPPORT_HEAL_SACRIFICE_4']
+    startingHealth: 15,
+    possibleSkills: ['DO_NOTHING', 'HIT_LOOT', 'HIT_2',
+      'SUPPORT_HEAL_SACRIFICE_3', 'SUPPORT_HEAL_SACRIFICE_4']
   },
 
   SPECIAL_WEALTH_HIGH: {
     name: 'Seto Kaiba',
     quote: `Screw the rules, I've got money.`,
-    description: `You start with \u20B4200. Use it before you lose it.`,
+    description: `You can gain \u20B420.`,
 
     type: 'SPECIAL',
     startingHealth: 10,
-    startingMoney: 200,
-    possibleSkills: ['HIT_LOOT', 'HIT_2']
+    possibleSkills: ['DO_NOTHING', 'HIT_LOOT', 'DO_GAIN_20', 'HIT_2']
   },
 
   SPECIAL_WEALTH_MED: {
     name: 'Snoop Dawg',
     quote: `If the ride is more fly, then you must buy.`,
-    description: `You start with \u20B4150.`,
+    description: `You can gain \u20B415.`,
 
     type: 'SPECIAL',
     startingHealth: 15,
-    startingMoney: 150,
-    possibleSkills: ['HIT_LOOT', 'HIT_2']
+    possibleSkills: ['DO_NOTHING', 'HIT_LOOT', 'DO_GAIN_15', 'HIT_2']
   },
 
-  // SPECIAL_WEALTH_REGEN: {
-  //   name: 'Mahk Zuckahbahg',
-  //   quote: `CEO`,
-  //   description: `You gain \u20B410 per turn.`,
+  SPECIAL_WEALTH_REGEN: {
+    name: 'Mahk Zuckahbahg',
+    quote: `CEO`,
+    description: `You passively gain \u20B410 per turn.`,
 
-  //   type: 'SPECIAL',
-  //   startingHealth: 12,
-  //   startingMoney: 100,
-  //   possibleSkills: ['HIT_LOOT', 'HIT_2'],
-  //   postTurnStep: 'MONEY_BY_10'
-  // }
+    type: 'SPECIAL',
+    startingHealth: 11,
+    possibleSkills: ['DO_NOTHING', 'HIT_LOOT', 'HIT_2'],
+    postTurnStep: 'MONEY_GAINED_10'
+  }
 
   // other possible specials:
   // - if somebody hits a target, the hitter receives 2-3 damage
@@ -175,7 +183,8 @@ export const PROFESSIONS = {
 function createHitSkillObj (hitAmount) {
   return {
     name: 'Hit for ' + hitAmount + ' damage.',
-    type: 'HIT',
+    step: 'HIT',
+    type: 'ATTACK',
     doSkill (playersState, payload) {
       const {player, target} = payload
       playersState[target].health = playersState[target].health - hitAmount
@@ -185,12 +194,13 @@ function createHitSkillObj (hitAmount) {
 
 function createHitSacrificeSkillObj (hitAmount) {
   return {
-    name: 'Hit for ' + hitAmount + ' damage, lose ' + (hitAmount - 1) + ' health.',
-    type: 'HIT',
+    name: 'Hit for ' + hitAmount + ' damage, lose ' + (hitAmount - 2) + ' health.',
+    step: 'HIT',
+    type: 'ATTACK',
     doSkill (playersState, payload) {
       const {player, target} = payload
       playersState[target].health = playersState[target].health - hitAmount
-      playersState[player].health = playersState[player].health - (hitAmount - 1)
+      playersState[player].health = playersState[player].health - (hitAmount - 2)
     }
     // in the future, might have to add a `doSkillSideEffect` step
   }
@@ -199,7 +209,8 @@ function createHitSacrificeSkillObj (hitAmount) {
 function createHealSkillObj (healAmount) {
   return {
     name: 'Heal for ' + healAmount + ' health.',
-    type: 'HEAL',
+    step: 'HEAL',
+    type: 'SUPPORT',
     doSkill (playersState, payload) {
       const {player, target} = payload
       const healedHealth = playersState[target].health + healAmount
@@ -211,36 +222,60 @@ function createHealSkillObj (healAmount) {
 
 function createHealSacrificeSkillObj (healAmount) {
   return {
-    name: 'Heal for ' + healAmount + ' health, lose ' + (healAmount - 1) + ' health.',
-    type: 'HEAL',
+    name: 'Heal for ' + healAmount + ' health, lose ' + (healAmount - 2) + ' health.',
+    step: 'HEAL',
+    type: 'SUPPORT',
     doSkill (playersState, payload) {
       const {player, target} = payload
-      playersState[target].health = playersState[target].health + healAmount
-      playersState[player].health = playersState[player].health - (healAmount - 1)
+      const maxHealth = playersState[target].maxHealth
+      playersState[target].health = Math.min(playersState[target].health + healAmount, maxHealth)
+      playersState[player].health = playersState[player].health - (healAmount - 2)
     }
     // in the future, might have to add a `doSkillSideEffect` step
   }
 }
 
+function createGainMoneyObj (moneyAmount) {
+  return {
+    name: 'Gain \u20B4' + moneyAmount + '.',
+    step: 'NO_TARGET',
+    type: 'INNOCENT',
+    doSkill (playersState, payload) {
+      const {player, target} = payload
+      playersState[player].money = playersState[player].money + moneyAmount
+    }
+  }
+}
 
 export const SKILLS = {
-  // DO_NOTHING: {
-  //   name: "Do nothing and make \u20B47.",
-  //   type: 'HIT',
-  //   doSkill (playersState, payload) {
-  //     const {player, target} = payload
-  //     playersState[player].money = playersState[player].money + 7
-  //   }
-  // },
+  DO_NOTHING: {
+    name: "Do nothing and gain \u20B47.",
+    step: 'NO_TARGET',
+    type: 'INNOCENT',
+    doSkill (playersState, payload) {
+      const {player, target} = payload
+      playersState[player].money = playersState[player].money + 7
+    }
+  },
   HIT_LOOT: {
-    name: "Hit for 1 damage and steal \u20B45-\u20B410.",
-    type: 'HIT',
+    name: "Steal \u20B45-\u20B410.",
+    step: 'HIT',
+    type: 'ATTACK',
     doSkill (playersState, payload) {
       const {player, target} = payload
       const stolenAmount = _.random(5, 10)
       playersState[player].money = playersState[player].money + stolenAmount
       playersState[target].money = playersState[target].money - stolenAmount
-      playersState[target].health = playersState[target].health - 1
+    }
+  },
+  DO_SELF_HEAL_2: {
+    name: 'Heal yourself for 2 health',
+    step: 'NO_TARGET',
+    type: 'INNOCENT',
+    doSkill (playersState, payload) {
+      const {player, target} = payload
+      const maxHealth = playersState[player].maxHealth
+      playersState[player].health = Math.min(playersState[player].health + 2, maxHealth)
     }
   },
   HIT_2: createHitSkillObj(2),
@@ -249,12 +284,12 @@ export const SKILLS = {
   SUPPORT_HEAL_2: createHealSkillObj(2),
   SUPPORT_HEAL_3: createHealSkillObj(3),
   SUPPORT_HEAL_4: createHealSkillObj(4),
-  HIT_SACRIFICE_2: createHitSacrificeSkillObj(2),
   HIT_SACRIFICE_3: createHitSacrificeSkillObj(3),
   HIT_SACRIFICE_4: createHitSacrificeSkillObj(4),
-  SUPPORT_HEAL_SACRIFICE_2: createHealSacrificeSkillObj(2),
   SUPPORT_HEAL_SACRIFICE_3: createHealSacrificeSkillObj(3),
-  SUPPORT_HEAL_SACRIFICE_4: createHealSacrificeSkillObj(4)
+  SUPPORT_HEAL_SACRIFICE_4: createHealSacrificeSkillObj(4),
+  DO_GAIN_15: createGainMoneyObj(15),
+  DO_GAIN_20: createGainMoneyObj(20)
 }
 
 // all of these functions write to newPlayersState
@@ -285,9 +320,16 @@ function createHealBy (amountHealed) {
   }
 }
 
+function createMoneyGained (moneyGained) {
+  return function (newPlayersState, playerId) {
+    newPlayersState[playerId].money = newPlayersState[playerId].money + moneyGained
+  }
+}
+
 export const POST_TURN_STEPS = {
   HEAL_BY_1: createHealBy(1),
-  HEAL_BY_3: createHealBy(3)
+  HEAL_BY_3: createHealBy(3),
+  MONEY_GAINED_10: createMoneyGained(10)
 }
 
 export default {

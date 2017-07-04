@@ -21,18 +21,27 @@ class ChooseSkill extends Component {
   }
 
   onChooseSkill = (skillId, skillName) => {
+    if (_.startsWith(skillId, 'DO')) {
+      // if the skill requires no target, skip the targeting phase
+      this.queueSkill(skillId)
+      return
+    }
     this.setState({
       chosenSkillId: skillId,
       chosenSkillName: skillName
     })
   }
 
-  onChooseTarget = async (targetId) => {
+  onChooseTarget = (targetId) => {
     this.setState({shouldHideButton: true})
-    await actions.queueSkill({
+    this.queueSkill(this.state.chosenSkillId, targetId)
+  }
+
+  queueSkill = (skillId, targetId) => {
+    actions.queueSkill({
       player: this.props.appState.player,
-      target: targetId,
-      skill: this.state.chosenSkillId
+      skill: skillId,
+      target: targetId
     })
   }
 
