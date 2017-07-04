@@ -3,6 +3,7 @@ import _ from 'lodash'
 
 import Landing from  './components/Landing'
 import Lobby from  './components/Lobby'
+import ChooseProfession from  './components/ChooseProfession'
 import ChooseSkill from  './components/ChooseSkill'
 import ReviewTurn from  './components/ReviewTurn'
 import SpectatorView from  './components/SpectatorView'
@@ -60,6 +61,12 @@ class App extends Component {
     }
   }
 
+  renderChooseProfession () {
+    if (this.state.player && this.state.gameState.status === 'CHOOSE_PROFESSION') {
+      return <ChooseProfession appState={this.state} />
+    }
+  }
+
   renderChooseSkill () {
     if (this.state.player && this.state.gameState.status === 'CHOOSE_SKILL' && this.isPlayerAlive()) {
       return <ChooseSkill appState={this.state} />
@@ -89,7 +96,11 @@ class App extends Component {
   renderSpectatorView () {
     // only show if the game has already started
     // and either the player's dead or it's somebody who's just watching
-    if (this.state.gameState.status && (!this.isPlayerAlive() || !this.state.player) && !this.isGameOver()) {
+    if (
+      this.state.gameState.status
+      && this.state.gameState.status !== 'CHOOSE_PROFESSION'
+      && (!this.isPlayerAlive() || !this.state.player)
+      && !this.isGameOver()) {
       return <SpectatorView appState={this.state} />
     }
   }
@@ -97,6 +108,7 @@ class App extends Component {
   render () {
     return (
       <div className="">
+        {this.renderChooseProfession()}
         {this.renderChooseSkill()}
         {this.renderReviewTurn()}
         {this.renderSpectatorView()}

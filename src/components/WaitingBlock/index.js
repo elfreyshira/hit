@@ -45,13 +45,22 @@ class WaitingBlock extends Component {
   chosenImage = _.sample(waitingImages)
 
   render () {
-    const {playersAlive, playersChosenSkill, playersReviewedTurn} = this.props.appState.gameState.meta.turn
+    const {
+      playersAlive,
+      playersChosenSkill,
+      playersReviewedTurn,
+      playersChosenProfession
+    } = this.props.appState.gameState.meta.turn
+
     let numberWaitingFor
     if (this.props.appState.gameState.status === 'CHOOSE_SKILL') {
       numberWaitingFor = playersAlive - playersChosenSkill
     }
     else if (this.props.appState.gameState.status === 'REVIEW_TURN') {
       numberWaitingFor = playersAlive - playersReviewedTurn
+    }
+    else if (this.props.appState.gameState.status === 'CHOOSE_PROFESSION') {
+      numberWaitingFor = playersAlive - playersChosenProfession
     }
 
     let waitingText

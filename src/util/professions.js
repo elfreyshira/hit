@@ -21,7 +21,7 @@ export const PROFESSIONS = {
     description: `Each turn, you cannot lose more than 2 health.`,
 
     type: 'TANK',
-    startingHealth: 14,
+    startingHealth: 12,
     possibleSkills: ['HIT_LOOT', 'HIT_2'],
     hitFilter: 'NO_MORE_THAN_2'
   },
@@ -128,31 +128,31 @@ export const PROFESSIONS = {
       but you lose health equal to one less than what you healed for.`,
 
     type: 'SUPPORT',
-    startingHealth: 20,
+    startingHealth: 17,
     possibleSkills: ['HIT_LOOT', 'HIT_2', 'SUPPORT_HEAL_SACRIFICE_2','SUPPORT_HEAL_SACRIFICE_3','SUPPORT_HEAL_SACRIFICE_4']
   },
 
-  // SPECIAL_WEALTH_HIGH: {
-  //   name: 'Seto Kaiba',
-  //   quote: `Screw the rules, I've got money.`,
-  //   description: `You start with \u20B4200. Use it before you lose it.`,
+  SPECIAL_WEALTH_HIGH: {
+    name: 'Seto Kaiba',
+    quote: `Screw the rules, I've got money.`,
+    description: `You start with \u20B4200. Use it before you lose it.`,
 
-  //   type: 'SPECIAL',
-  //   startingHealth: 10,
-  //   startingMoney: 200,
-  //   possibleSkills: ['HIT_LOOT', 'HIT_2']
-  // },
+    type: 'SPECIAL',
+    startingHealth: 10,
+    startingMoney: 200,
+    possibleSkills: ['HIT_LOOT', 'HIT_2']
+  },
 
-  // SPECIAL_WEALTH_MED: {
-  //   name: 'Snoop Dawg',
-  //   quote: `If the ride is more fly, then you must buy.`,
-  //   description: `You start with \u20B4150.`,
+  SPECIAL_WEALTH_MED: {
+    name: 'Snoop Dawg',
+    quote: `If the ride is more fly, then you must buy.`,
+    description: `You start with \u20B4150.`,
 
-  //   type: 'SPECIAL',
-  //   startingHealth: 15,
-  //   startingMoney: 150,
-  //   possibleSkills: ['HIT_LOOT', 'HIT_2']
-  // },
+    type: 'SPECIAL',
+    startingHealth: 15,
+    startingMoney: 150,
+    possibleSkills: ['HIT_LOOT', 'HIT_2']
+  },
 
   // SPECIAL_WEALTH_REGEN: {
   //   name: 'Mahk Zuckahbahg',

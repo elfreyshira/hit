@@ -2,6 +2,7 @@ import firebase from 'firebase'
 import _ from 'lodash'
 
 import getRoomID from '../util/getRoomID'
+import { PROFESSIONS } from '../util/professions'
 
 import fb from './fb'
 import startGame from './startGame'
@@ -37,8 +38,7 @@ async function addPlayer (payload) {
 
   await fb('players', playerId).set({
     name,
-    id: playerId,
-    money: 100 // starting money amount
+    id: playerId
   })
   return playerId
 }
@@ -127,12 +127,35 @@ async function hireDetective (payload) {
   })
 }
 
+async function chooseProfession (payload) {
+  const {player, profession} = payload
+
+  await fb('players', player, 'professionChoices').remove()
+  const playerObj = {
+    profession,
+    health: PROFESSIONS[profession].startingHealth,
+    maxHealth: PROFESSIONS[profession].startingHealth,
+    money: PROFESSIONS[profession].startingMoney || 100, // default starting money of 100
+  }
+  await fb('players', player).update(playerObj)
+
+  await fb('meta/turn/playersChosenProfession').transaction((playersChosenProfession) => {
+    return _.isNumber(playersChosenProfession) ? playersChosenProfession + 1 : 0
+  })
+
+  const {playersAlive, playersChosenProfession} = (await fb('meta/turn').once('value')).val()
+  if (playersAlive === playersChosenProfession) {
+    await fb('status').set('CHOOSE_SKILL')
+  }
+}
+
 const gameState = {
   meta: {
     turn: {
       playersAlive: 10,
       playersChosenSkill: 0,
-      playersReviewedTurn: 0
+      playersReviewedTurn: 0,
+      playersChosenProfession: 0
     }
   },
   status: 'CHOOSE_SKILL|REVIEW_TURN',
@@ -187,5 +210,6 @@ export default {
   startGame,
   queueSkill,
   readyForNextTurn,
-  hireDetective
+  hireDetective,
+  chooseProfession
 }

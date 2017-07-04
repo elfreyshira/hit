@@ -9,7 +9,7 @@ class IntroHeader extends Component {
     return (
       <div>
         <h1>Hit</h1>
-        <h3>It's like Mafia, but better.</h3>
+        <h3>It's like Mafia. But instead voting, hit.</h3>
         <hr/>
         <h4> Rules </h4>
         <ul>

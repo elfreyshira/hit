@@ -64,6 +64,8 @@ class GameOver extends Component {
         <hr />
         <PlayerInfo appState={this.props.appState} />
         <hr />
+        <HitsLog appState={this.props.appState} />
+        <hr />
         {this.renderPlayersList()}
       </div>
     )
