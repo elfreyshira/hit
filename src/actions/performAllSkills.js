@@ -78,17 +78,21 @@ export default async function performAllSkills () {
 
   const isBadTeamAllDead = badTeam.length === _.filter(badTeam, (playerObj) => playerObj.health <= 0).length
   const isGoodTeamAllDead = goodTeam.length === _.filter(goodTeam, (playerObj) => playerObj.health <= 0).length
-  if (isBadTeamAllDead && isGoodTeamAllDead) {
-    await fb('status').set('TIE_VICTORY')
-  }
-  else if (isBadTeamAllDead) {
-    await fb('status').set('GOOD_VICTORY')
-  }
-  else if (isGoodTeamAllDead) {
-    await fb('status').set('BAD_VICTORY')
+
+  if (isBadTeamAllDead || isGoodTeamAllDead) { // GAME OVER
+    fb('meta/time/end').set((new Date()).toString()) // log when the game ends
+    if (isBadTeamAllDead && isGoodTeamAllDead) {
+      fb('status').set('TIE_VICTORY')
+    }
+    else if (isBadTeamAllDead) {
+      fb('status').set('GOOD_VICTORY')
+    }
+    else if (isGoodTeamAllDead) {
+      fb('status').set('BAD_VICTORY')
+    }
   }
   else {
     // move on if no team has won yet
-    await fb('status').set('REVIEW_TURN')
+    fb('status').set('REVIEW_TURN')
   }
 }

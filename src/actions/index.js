@@ -167,6 +167,9 @@ async function sendMessage (payload) {
 
 const gameState = {
   meta: {
+    time: {
+      start: 'Thu Jul 06 2017 13:08:59 GMT-0500 (CDT)'
+    },
     turn: {
       playersAlive: 10,
       playersChosenSkill: 0,

@@ -7,6 +7,21 @@ import DeadPeople from '../ReviewTurn/DeadPeople'
 
 import { PROFESSIONS, SKILLS } from '../../util/professions'
 
+function getPlayersOnTeam (players, team) {
+  return _.chain(players)
+    .filter({team})
+    .map((playerObj) => {
+      const isPlayerDead = playerObj.health <= 0
+      return (
+        <li key={playerObj.name}>
+          {playerObj.name}
+          {isPlayerDead ? ' (RIP)' : ''}
+        </li>
+      )
+    })
+    .valueOf()
+}
+
 class GameOver extends Component {
 
   static propTypes = {
@@ -14,27 +29,14 @@ class GameOver extends Component {
   }
 
   renderPlayersList() {
-    const goodPlayers = _.chain(this.props.appState.gameState.players)
-      .filter({team: 'GOOD'})
-      .map('name')
-      .map((playerName) => {
-        return <li key={playerName}>{playerName}</li>
-      })
-      .valueOf()
-
-    const badPlayers = _.chain(this.props.appState.gameState.players)
-      .filter({team: 'BAD'})
-      .map('name')
-      .map((playerName) => {
-        return <li key={playerName}>{playerName}</li>
-      })
-      .valueOf()
+    const goodPlayers = getPlayersOnTeam(this.props.appState.gameState.players, 'GOOD')
+    const badPlayers = getPlayersOnTeam(this.props.appState.gameState.players, 'BAD')
 
     return (
       <div>
         <h4>Evil Hitmen</h4>
         <ul>{badPlayers}</ul>
-        <h4>Rebel forces</h4>
+        <h4>Good Rebel forces</h4>
         <ul>{goodPlayers}</ul>
       </div>
     )
