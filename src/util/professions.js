@@ -143,7 +143,7 @@ export const PROFESSIONS = _.mapValues({
   SPECIAL_WEALTH_HIGH: {
     name: 'Seto Kaiba',
     quote: `Screw the rules, I've got money.`,
-    description: `You can gain \u20B420.`,
+    description: `You can gain $20.`,
 
     type: 'SPECIAL',
     startingHealth: 10,
@@ -153,7 +153,7 @@ export const PROFESSIONS = _.mapValues({
   SPECIAL_WEALTH_MED: {
     name: 'Snoop Dawg',
     quote: `If the ride is more fly, then you must buy.`,
-    description: `You can gain \u20B415.`,
+    description: `You can gain $15.`,
 
     type: 'SPECIAL',
     startingHealth: 15,
@@ -163,7 +163,7 @@ export const PROFESSIONS = _.mapValues({
   SPECIAL_WEALTH_REGEN: {
     name: 'Mahk Zuckahbahg',
     quote: `CEO`,
-    description: `You passively gain \u20B48 per turn.`,
+    description: `You passively gain $8 per turn.`,
 
     type: 'SPECIAL',
     startingHealth: 11,
@@ -238,7 +238,7 @@ function createHealSacrificeSkillObj (healAmount) {
 
 function createGainMoneyObj (moneyAmount) {
   return {
-    name: 'Gain \u20B4' + moneyAmount + '.',
+    name: 'Gain $' + moneyAmount + '.',
     step: 'NO_TARGET',
     type: 'INNOCENT',
     doSkill (playersState, payload) {
@@ -250,7 +250,7 @@ function createGainMoneyObj (moneyAmount) {
 
 export const SKILLS = {
   DO_NOTHING: {
-    name: "Do nothing and gain \u20B47.",
+    name: "Do nothing and gain $7.",
     step: 'NO_TARGET',
     type: 'INNOCENT',
     doSkill (playersState, payload) {
@@ -259,7 +259,7 @@ export const SKILLS = {
     }
   },
   HIT_LOOT: {
-    name: "Steal \u20B45-\u20B410.",
+    name: "Steal $5-$10.",
     step: 'HIT',
     type: 'ATTACK',
     doSkill (playersState, payload) {

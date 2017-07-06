@@ -7,7 +7,6 @@ import { PROFESSIONS, SKILLS } from '../../util/professions'
 import Button from '../Button'
 import PlayerInfo from '../PlayerInfo'
 import WaitingBlock from '../WaitingBlock'
-import Cur from '../Cur'
 
 class HireDetective extends Component {
 
@@ -45,35 +44,35 @@ class HireDetective extends Component {
             size="small"
             disabled={detectiveCosts.health > playerMoney}
           >
-            Current health: <Cur/>{detectiveCosts.health}
+            Current health: ${detectiveCosts.health}
           </Button>
           <Button
             onClick={this.onInvestigateProfession}
             size="small"
             disabled={detectiveCosts.profession > playerMoney}
           >
-            Profession: <Cur/>{detectiveCosts.profession}
+            Profession: ${detectiveCosts.profession}
           </Button>
           <Button
             onClick={this.onInvestigateMoney}
             size="small"
             disabled={detectiveCosts.money > playerMoney}
           >
-            Money: <Cur/>{detectiveCosts.money}
+            Money: ${detectiveCosts.money}
           </Button>
           <Button
             onClick={this.onInvestigateIntent}
             size="small"
             disabled={currentTurn <= 1 || detectiveCosts.intent > playerMoney}
           >
-            Intent from previous turn: <Cur/>{detectiveCosts.intent}
+            Intent from previous turn: ${detectiveCosts.intent}
           </Button>
           <Button
             onClick={this.onInvestigateTeam}
             size="small"
             disabled={detectiveCosts.team > playerMoney}
           >
-            Team: <Cur/>{detectiveCosts.team}
+            Team: ${detectiveCosts.team}
           </Button>
         </div>
       )
@@ -193,7 +192,7 @@ class HireDetective extends Component {
       }
       else if (detective === 'money') {
         const targetMoney = this.props.appState.gameState.players[target].money
-        investigationText = <span>{targetName} currently has <Cur bg="light" />{targetMoney}</span>
+        investigationText = <span>{targetName} currently has ${targetMoney}</span>
       }
       else if (detective === 'team') {
         const targetTeam = this.props.appState.gameState.players[target].team

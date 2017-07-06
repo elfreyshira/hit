@@ -4,7 +4,6 @@ import ReactCSSTransitionGroup from 'react-addons-css-transition-group'
 
 import { PROFESSIONS, SKILLS } from '../../util/professions'
 
-import Cur from '../Cur'
 import './ReceivedMessages.css'
 
 class ReceivedMessages extends Component {

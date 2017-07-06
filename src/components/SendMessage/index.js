@@ -4,7 +4,6 @@ import _ from 'lodash'
 import actions from '../../actions'
 
 import Button from '../Button'
-import Cur from '../Cur'
 
 class SendMessage extends Component {
 
@@ -34,7 +33,7 @@ class SendMessage extends Component {
           size="small"
           disabled={20 > playerMoney}
         >
-          Send message for <Cur/>20
+          Send message for $20
         </Button>
       </div>
     )
