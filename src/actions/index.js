@@ -157,6 +157,14 @@ async function chooseProfession (payload) {
   }
 }
 
+async function sendMessage (payload) {
+  const {player, target, message, turn} = payload
+  fb('messages').push({player, target, message, turn})
+  fb('players', player, 'money').transaction((playerMoney) => {
+    return playerMoney - 20
+  })
+}
+
 const gameState = {
   meta: {
     turn: {
@@ -219,5 +227,6 @@ export default {
   queueSkill,
   readyForNextTurn,
   hireDetective,
-  chooseProfession
+  chooseProfession,
+  sendMessage
 }

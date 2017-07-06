@@ -20,9 +20,7 @@ class HireDetective extends Component {
     shouldHideButton: false
   }
 
-  onHireDetective = (detective) => {
-    this.setState({chosenDetective: detective})
-  }
+  onHireDetective = (detective) => this.setState({chosenDetective: detective})
 
   onInvestigateHealth = _.partial(this.onHireDetective, 'health')
   onInvestigateProfession = _.partial(this.onHireDetective, 'profession')
@@ -82,10 +80,7 @@ class HireDetective extends Component {
     }
   }
 
-  onHireDifferentDetective = (evt) => {
-    evt.preventDefault()
-    this.setState({chosenDetective: null})
-  }
+  onHireDifferentDetective = () => this.setState({chosenDetective: null})
 
   onChooseTarget = async (targetId) => {
     this.setState({shouldHideButton: true})
@@ -96,6 +91,7 @@ class HireDetective extends Component {
       cost: this.props.appState.gameState.detectives.cost[this.state.chosenDetective]
     })
   }
+
   shuffleTargets = _.once(_.shuffle)
   renderTargetList = () => { // originally c/p from ChooseSkill
     if (this.state.chosenDetective && !this.hasHiredDetectiveWithTarget()) {
@@ -126,14 +122,14 @@ class HireDetective extends Component {
           <h5>
             Detective hired: {this.state.chosenDetective}
             <br />
-            <a href="#" onClick={this.onHireDifferentDetective}>[hire different detective]</a>
+            <a href="javascript:void(0)" onClick={this.onHireDifferentDetective}>[hire different detective]</a>
           </h5>
           <h4>Select a player to investigate:</h4>
           {targetButtons}
         </div>
       )
     }
-  
+
   }
 
   renderInvestigation = () => {

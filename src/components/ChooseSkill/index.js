@@ -8,6 +8,7 @@ import Button from '../Button'
 import PlayerInfo from '../PlayerInfo'
 import WaitingBlock from '../WaitingBlock'
 import HireDetective from '../HireDetective'
+import SendMessage from '../SendMessage'
 
 class ChooseSkill extends Component {
 
@@ -17,7 +18,7 @@ class ChooseSkill extends Component {
 
   state = {
     chosenSkillId: null,
-    shouldHideButton: false
+    shouldHideTargets: false
   }
 
   onChooseSkill = (skillId, skillName) => {
@@ -33,7 +34,7 @@ class ChooseSkill extends Component {
   }
 
   onChooseTarget = (targetId) => {
-    this.setState({shouldHideButton: true})
+    this.setState({shouldHideTargets: true})
     this.queueSkill(this.state.chosenSkillId, targetId)
   }
 
@@ -87,7 +88,7 @@ class ChooseSkill extends Component {
   }
   shuffleTargets = _.once(_.shuffle)
   renderTargetList = () => {
-    if (this.state.chosenSkillId && !this.hasChosenSkillAndTarget()) {
+    if (!this.state.shouldHideTargets && this.state.chosenSkillId && !this.hasChosenSkillAndTarget()) {
       const targetButtons = this.shuffleTargets( // mix up the targets to avoid bias
         _.map(this.props.appState.gameState.players, (targetObj, targetId) => {
           if (targetId === this.props.appState.player || targetObj.health <= 0) {
@@ -97,7 +98,6 @@ class ChooseSkill extends Component {
           else {
             return (
               <Button
-                hidden={this.state.shouldHideButton}
                 wrapperStyle={{minWidth:'200px'}}
                 key={targetId}
                 onClick={_.partial(this.onChooseTarget, targetId)}
@@ -140,6 +140,14 @@ class ChooseSkill extends Component {
     }
   }
 
+  renderSendMessage () {
+    if (!this.hasChosenSkillAndTarget()) {
+      return (
+        <SendMessage appState={this.props.appState} />
+      )
+    }
+  }
+
   render () {
     return (
       <div>
@@ -148,6 +156,7 @@ class ChooseSkill extends Component {
         {this.renderSkillList()}
         {this.renderTargetList()}
         {this.renderHireDetective()}
+        {this.renderSendMessage()}
         {this.renderWaiting()}
       </div>
     );

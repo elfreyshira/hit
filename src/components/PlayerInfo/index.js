@@ -4,6 +4,7 @@ import _ from 'lodash'
 import { PROFESSIONS, SKILLS } from '../../util/professions'
 
 import Cur from '../Cur'
+import ReceivedMessages from './ReceivedMessages'
 
 const TEAM_NAMES = {
   BAD: 'Evil Hitmen -- eliminate the rebel forces',
@@ -34,15 +35,17 @@ class PlayerInfo extends Component {
   render () {
     const playerObj = this.props.appState.gameState.players[this.props.appState.player]
 
+
     return (
       <div>
         <p>Name: {playerObj.name}</p>
+        <p>Team: {TEAM_NAMES[playerObj.team]}</p>
+        {this.renderEvilTeammates()}
         <p>Profession: {PROFESSIONS[playerObj.profession].name}</p>
         <p>Description: {PROFESSIONS[playerObj.profession].description}</p>
         <p>Health: {Math.max(playerObj.health, 0)} / {playerObj.maxHealth}</p>
         <p>Money: <Cur bg="light" />{Math.max(playerObj.money, 0)}</p>
-        <p>Team: {TEAM_NAMES[playerObj.team]}</p>
-        {this.renderEvilTeammates()}
+        <ReceivedMessages appState={this.props.appState} />
       </div>
     );
   }

@@ -1,0 +1,60 @@
+@keyframes flashMessage {
+  0% {
+    position: fixed;
+    font-size: 20px;
+    background-color: rgba(255, 255, 255, 0.95);
+    height: 100%;
+    width: 100%;
+    top: 0;
+    left: 0;
+    padding: 30vh 5vw 0 5vw;
+    z-index: 99;
+    animation-timing-function: step-end;
+    -webkit-animation-timing-function: step-end;
+  }
+  50% {
+    position: initial;
+    font-size: initial;
+    height: initial;
+    width: initial;
+    top: initial;
+    left: initial;
+    padding: initial;
+    padding: initial;
+    z-index: initial;
+    animation-timing-function: step-end;
+    -webkit-animation-timing-function: step-end;
+  }
+  60% {
+    background-color: rgba(250, 170, 89, 0.95);
+    animation-timing-function: linear;
+    -webkit-animation-timing-function: linear;
+  }
+  70% {
+    background-color: rgba(255, 255, 255, 0.95);
+    animation-timing-function: linear;
+    -webkit-animation-timing-function: linear;
+  }
+  80% {
+    background-color: rgba(250, 170, 89, 0.95);
+    animation-timing-function: linear;
+    -webkit-animation-timing-function: linear;
+  }
+  90% {
+    background-color: rgba(255, 255, 255, 0.95);
+    animation-timing-function: linear;
+    -webkit-animation-timing-function: linear;
+  }
+  100% {
+    background-color: initial;
+    animation-timing-function: linear;
+    -webkit-animation-timing-function: linear;
+  }
+}
+
+.new-message-item-enter {
+  animation-name: flashMessage;
+  animation-duration: 2.5s;
+  -webkit-animation-name: flashMessage;
+  -webkit-animation-duration: 2.5s;
+}
