@@ -178,7 +178,7 @@ export const PROFESSIONS = _.mapValues({
   // - copy other people's moves
 }, (professionObj) => {
   // add the base skills that all professions have
-  professionObj.possibleSkills = ['DO_NOTHING', 'HIT_LOOT', 'HIT_2'].concat(professionObj.possibleSkills)
+  professionObj.possibleSkills = ['DO_GAIN_7', 'HIT_LOOT', 'HIT_2'].concat(professionObj.possibleSkills)
   return professionObj
 })
 
@@ -251,7 +251,7 @@ function createGainMoneyObj (moneyAmount) {
 }
 
 export const SKILLS = {
-  DO_NOTHING: {
+  DO_GAIN_7: {
     name: "Do nothing and gain $7.",
     step: 'NO_TARGET',
     type: 'INNOCENT',

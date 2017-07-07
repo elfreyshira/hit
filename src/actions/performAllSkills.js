@@ -11,7 +11,7 @@ export default async function performAllSkills () {
   const oldPlayersState = (await fb('players').once('value')).val()
   const newPlayersState = _.cloneDeep(oldPlayersState)
 
-  ////// PERFORM HIT SKILLS AND HIT FILTERS ///////
+  ////// PERFORM HIT SKILLS ///////
   const hitSkills = _.chain(queuedSkills)
     .values()
     .filter((skillObj) => (SKILLS[skillObj.skill].step === 'HIT'))
@@ -20,6 +20,8 @@ export default async function performAllSkills () {
   _.forEach(hitSkills, (skillObj) => {
     SKILLS[skillObj.skill].doSkill(newPlayersState, skillObj) // write to newPlayersState
   })
+
+  ////// PERFORM HIT FILTERS ///////
   _.forEach(oldPlayersState, (playerObj, playerId) => {
     const hitFilterId = PROFESSIONS[playerObj.profession].hitFilter
     if (hitFilterId) {
@@ -64,7 +66,7 @@ export default async function performAllSkills () {
 
   await fb('players').update(newPlayersState)
 
-  // check if anybody died
+  ////// CHECK IF ANYBODY HAS DIED //////
   _.map(newPlayersState, (newPlayerObj, playerId) => {
     if (newPlayerObj.health <= 0 && oldPlayersState[playerId].health > 0) {
       fb('meta/turn/playersAlive').transaction((playersAlive) => (playersAlive - 1))

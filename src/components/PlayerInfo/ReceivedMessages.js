@@ -25,7 +25,7 @@ class ReceivedMessages extends Component {
         return (
           <li key={messageObj.player + messageObj.turn}>
             [Turn {messageObj.turn}] Message from {this.props.appState.gameState.players[messageObj.player].name}
-            : {messageObj.message}
+            : "{messageObj.message}"
           </li>
         )
       })
