@@ -21,6 +21,24 @@ export default async function performAllSkills () {
     SKILLS[skillObj.skill].doSkill(newPlayersState, skillObj) // write to newPlayersState
   })
 
+  ////// PERFORM PROTECT SKILLS ///////
+  const protect1Skills = _.chain(queuedSkills)
+    .values()
+    .filter((skillObj) => (SKILLS[skillObj.skill].step === 'PROTECT_1'))
+    .valueOf()
+
+  _.forEach(protect1Skills, (skillObj) => {
+    SKILLS[skillObj.skill].doSkill(oldPlayersState, newPlayersState, skillObj) // write to newPlayersState
+  })
+  const protect2Skills = _.chain(queuedSkills)
+    .values()
+    .filter((skillObj) => (SKILLS[skillObj.skill].step === 'PROTECT_2'))
+    .valueOf()
+
+  _.forEach(protect2Skills, (skillObj) => {
+    SKILLS[skillObj.skill].doSkill(oldPlayersState, newPlayersState, skillObj) // write to newPlayersState
+  })
+
   ////// PERFORM HIT FILTERS ///////
   _.forEach(oldPlayersState, (playerObj, playerId) => {
     const hitFilterId = PROFESSIONS[playerObj.profession].hitFilter

@@ -167,7 +167,7 @@ class HireDetective extends Component {
           .filter({player: target})
           .valueOf()
 
-        const skillsPlayerDid = _.map(skillsLastTurn, (skillObj) => {
+        const skillsPlayerDid = _.map(skillsLastTurn, (skillObj, index) => {
           const skillTargetPlayerObj = this.props.appState.gameState.players[skillObj.target]
           let skillTargetName = ''
           if (skillTargetPlayerObj) {
@@ -187,7 +187,7 @@ class HireDetective extends Component {
             skillTargetName = ''
           }
           return (
-            <span>
+            <span key={index}>
               {skillIntention} {skillTargetName}
             </span>
           )

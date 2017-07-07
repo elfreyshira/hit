@@ -12,14 +12,14 @@ export const PROFESSIONS = _.mapValues({
   /*************************/
   //////////////////////////
 
-  TANK_HEALTH: {
+  TANK_TAKE_DAMAGE: {
     name: 'Tankilicious',
     quote: "ME TANK. YOU HIT.",
-    description: `You can't do much, but you have a LOT of health.`,
+    description: `You can receive damage (reduced by 1) on behalf of somebody else.`,
 
     type: 'TANK',
     startingHealth: 20,
-    possibleSkills: []
+    possibleSkills: ['PROTECT_TAKE_DAMAGE_LESS_1']
   },
 
   TANK_SELF_HEAL: {
@@ -53,7 +53,7 @@ export const PROFESSIONS = _.mapValues({
     possibleSkills: [],
     hitFilter: 'DAMAGE_MIN_2',
 
-    minimumNumberOfPlayers: 8
+    minimumNumberOfPlayers: 10
   },
 
   TANK_AUTO_HEAL: {
@@ -73,7 +73,7 @@ export const PROFESSIONS = _.mapValues({
     description: `You receive double hit damage, but you recover 3 health every turn.`,
 
     type: 'TANK',
-    startingHealth: 20,
+    startingHealth: 22, // the only profession to pass the health cap of 20
     possibleSkills: [],
     hitFilter: 'DAMAGE_RECEIVED_DOUBLE',
     postTurnStep: 'HEAL_BY_3'
@@ -221,6 +221,26 @@ export const PROFESSIONS = _.mapValues({
     possibleSkills: ['HEAL_SPREAD_4_HEALTH_1']
   },
 
+  SUPPORT_PROTECT_MAX_DAMAGE_HIGH: {
+    name: 'Jackie Chan',
+    quote: `The best fights are the ones we avoid.`,
+    description: `You can limit somebody's damage received to a maximum of 2.`,
+
+    type: 'SUPPORT',
+    startingHealth: 12,
+    possibleSkills: ['PROTECT_DAMAGE_MAX_2']
+  },
+
+  SUPPORT_PROTECT_MAX_DAMAGE_MED: {
+    name: 'Hippocrates',
+    quote: `Make a habit of two things: to help; or at least to do no harm.`,
+    description: `You can limit somebody's damage received to a maximum of 3.`,
+
+    type: 'SUPPORT',
+    startingHealth: 16,
+    possibleSkills: ['PROTECT_DAMAGE_MAX_3']
+  },
+
   //////////////////////////
   /*************************/
   /////  SPECIAL ///////////
@@ -256,7 +276,19 @@ export const PROFESSIONS = _.mapValues({
     startingHealth: 11,
     possibleSkills: [],
     postTurnStep: 'MONEY_GAINED_8'
-  }
+  },
+
+  SPECIAL_WEALTH_GIVING: {
+    name: `BANK OF AMERICA: LIFE'S BETTER WHEN WE'RE CONNECTED`,
+    quote: `I LOVE BANK.`,
+    description: `You can enrich somebody else with $20.`,
+
+    type: 'SPECIAL',
+    startingHealth: 12,
+    possibleSkills: ['SUPPORT_MONEY_GIVE_20'],
+
+    minimumNumberOfPlayers: 5
+  },
 
   // other possible specials:
   // - if somebody hits a target, the hitter receives 2-3 damage
@@ -366,6 +398,22 @@ function createHealSpread (turnLength, healthPerTurn, skillEachTurn) {
   }
 }
 
+function createProtectDamageMax (maxDamage) {
+  return {
+    name: `Limit somebody's damage received to a maximum of ` + maxDamage + `.`,
+    step: 'PROTECT_1',
+    type: 'SUPPORT',
+    // PROTECT skills require both old and new players state
+    doSkill (oldPlayersState, newPlayersState, payload) {
+      const {player, target} = payload
+      newPlayersState[target].health = Math.max(
+        oldPlayersState[target].health - maxDamage,
+        newPlayersState[target].health
+      )
+    }
+  }
+}
+
 export const SKILLS = {
   DO_GAIN_7: {
     name: "Do nothing and gain $7.",
@@ -399,6 +447,31 @@ export const SKILLS = {
       playersState[player].health = Math.min(playersState[player].health + 2, maxHealth)
     }
   },
+  PROTECT_TAKE_DAMAGE_LESS_1: {
+    name: `Receive damage (reduced by 1) on somebody's behalf.`,
+    step: 'PROTECT_2',
+    type: 'SUPPORT',
+    // PROTECT skills require both old and new players state
+    doSkill (oldPlayersState, newPlayersState, payload) {
+      const {player, target} = payload
+      const damageTargetReceived = oldPlayersState[target].health - newPlayersState[target].health
+      if (damageTargetReceived > 0) {
+        newPlayersState[target].health = oldPlayersState[target].health
+        newPlayersState[player].health = newPlayersState[player].health - (damageTargetReceived - 1)
+      }
+    }
+  },
+  SUPPORT_MONEY_GIVE_20: {
+    name: `Enrich somebody with $20.`,
+    step: 'HEAL',
+    type: 'SUPPORT',
+    doSkill (newPlayersState, payload) {
+      const {player, target} = payload
+      newPlayersState[target].money = newPlayersState[target].money + 20
+    }
+  },
+  PROTECT_DAMAGE_MAX_2: createProtectDamageMax(2),
+  PROTECT_DAMAGE_MAX_3: createProtectDamageMax(3),
   HIT_1: createHitSkill(1),
   HIT_2: createHitSkill(2),
   HIT_3: createHitSkill(3),

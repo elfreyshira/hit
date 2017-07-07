@@ -56,18 +56,21 @@ class SendMessage extends Component {
         {targetObj.name}
       </Button>
     ))
-    const otherMessages = _.map(['I know who you are.', 'Help me.'], (messageText) => {
-      return (
-        <Button
-          wrapperStyle={{minWidth:'200px'}}
-          key={messageText}
-          onClick={_.partial(this.onChooseMessage, messageText)}
-          size="small"
-        >
-          {messageText}
-        </Button>
-      )
-    })
+    const otherMessages = _.map(
+      ['I know who you are.', 'Help me.', "I'll help you.", 'Thanks!'],
+      (messageText) => {
+        return (
+          <Button
+            wrapperStyle={{minWidth:'200px'}}
+            key={messageText}
+            onClick={_.partial(this.onChooseMessage, messageText)}
+            size="small"
+          >
+            {messageText}
+          </Button>
+        )
+      }
+    )
 
     return (
       <div>
