@@ -31,6 +31,7 @@ class GameOver extends Component {
   renderPlayersList() {
     const goodPlayers = getPlayersOnTeam(this.props.appState.gameState.players, 'GOOD')
     const badPlayers = getPlayersOnTeam(this.props.appState.gameState.players, 'BAD')
+    const heretic = getPlayersOnTeam(this.props.appState.gameState.players, 'HERETIC')
 
     return (
       <div>
@@ -38,6 +39,12 @@ class GameOver extends Component {
         <ul>{badPlayers}</ul>
         <h4>Good Rebel forces</h4>
         <ul>{goodPlayers}</ul>
+        {_.isEmpty(heretic) ? null : (
+          <div>
+            <h4>Heretic</h4>
+            <ul>{heretic}</ul>
+          </div>
+        )}
       </div>
     )
   }
@@ -55,8 +62,11 @@ class GameOver extends Component {
     else if (victoryStatus === 'GOOD_VICTORY') {
       victoryText = 'The evil hitmen are dead. Congrats, the rebel forces stand strong!'
     }
+    else if (victoryStatus === 'HERETIC_VICTORY') {
+      victoryText = `The heretic stands alone in victory! That's actually really impressive.`
+    }
     else if (victoryStatus === 'TIE_VICTORY') {
-      victoryText = 'Both teams were eliminated simultaneously. You all lose.'
+      victoryText = 'Everyone was eliminated simultaneously. You all lose.'
     }
 
     return (

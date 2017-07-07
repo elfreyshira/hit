@@ -203,6 +203,9 @@ class HireDetective extends Component {
         else if (targetTeam === 'BAD') {
           teamText = 'Evil hitmen'
         }
+        else if (targetTeam === 'HERETIC') {
+          teamText = 'Heretic'
+        }
         investigationText = <span>{targetName}'s team: {teamText}</span>
       }
 

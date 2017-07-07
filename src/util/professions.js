@@ -28,12 +28,12 @@ export const PROFESSIONS = _.mapValues({
   TANK_ARMOR: {
     name: 'Duke Devlin',
     quote: 'Ow that barely hurt.',
-    description: `Each turn, you cannot lose more than 2 health.`,
+    description: `Each turn, you cannot received more than 2 damage.`,
 
     type: 'TANK',
     startingHealth: 12,
     possibleSkills: [],
-    hitFilter: 'NO_MORE_THAN_2'
+    hitFilter: 'DAMAGE_MAX_2'
   },
 
   TANK_SQUISHY: {
@@ -44,7 +44,9 @@ export const PROFESSIONS = _.mapValues({
     type: 'TANK',
     startingHealth: 12,
     possibleSkills: [],
-    hitFilter: 'NO_DAMAGE_IF_2_OR_LESS'
+    hitFilter: 'DAMAGE_MIN_2',
+
+    minimumNumberOfPlayers: 8
   },
 
   TANK_AUTO_HEAL: {
@@ -53,7 +55,7 @@ export const PROFESSIONS = _.mapValues({
     description: `You recover 1 health every turn.`,
 
     type: 'TANK',
-    startingHealth: 13,
+    startingHealth: 14,
     possibleSkills: [],
     postTurnStep: 'HEAL_BY_1'
   },
@@ -66,7 +68,7 @@ export const PROFESSIONS = _.mapValues({
     type: 'TANK',
     startingHealth: 20,
     possibleSkills: [],
-    hitFilter: 'RECEIVE_DOUBLE_DAMAGE',
+    hitFilter: 'DAMAGE_RECEIVED_DOUBLE',
     postTurnStep: 'HEAL_BY_3'
   },
 
@@ -293,18 +295,18 @@ export const SKILLS = {
 
 // all of these functions write to newPlayersState
 export const HIT_FILTERS = {
-  NO_MORE_THAN_2 (oldPlayersState, newPlayersState, playerId) {
+  DAMAGE_MAX_2 (oldPlayersState, newPlayersState, playerId) {
     newPlayersState[playerId].health = Math.max(
       oldPlayersState[playerId].health - 2,
       newPlayersState[playerId].health
     )
   },
-  NO_DAMAGE_IF_2_OR_LESS (oldPlayersState, newPlayersState, playerId) {
+  DAMAGE_MIN_2 (oldPlayersState, newPlayersState, playerId) {
     if (oldPlayersState[playerId].health - newPlayersState[playerId].health <= 2) {
       newPlayersState[playerId].health = oldPlayersState[playerId].health
     }
   },
-  RECEIVE_DOUBLE_DAMAGE (oldPlayersState, newPlayersState, playerId) {
+  DAMAGE_RECEIVED_DOUBLE (oldPlayersState, newPlayersState, playerId) {
     const damageReceived = oldPlayersState[playerId].health - newPlayersState[playerId].health
     newPlayersState[playerId].health = oldPlayersState[playerId].health - (damageReceived * 2)
   },

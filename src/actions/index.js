@@ -168,7 +168,8 @@ async function sendMessage (payload) {
 const gameState = {
   meta: {
     time: {
-      start: 'Thu Jul 06 2017 13:08:59 GMT-0500 (CDT)'
+      start: 'Thu Jul 06 2017 13:08:59 GMT-0500 (CDT)',
+      end: 'Thu Jul 06 2017 13:25:04 GMT-0500 (CDT)'
     },
     turn: {
       playersAlive: 10,
@@ -183,7 +184,7 @@ const gameState = {
       name: 'player 1',
       health: 5,
       profession: 'TANK_LIFE',
-      team: 'BAD|GOOD|RENEGADE'
+      team: 'BAD|GOOD|HERETIC'
     },
     b234: {}
   },

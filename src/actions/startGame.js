@@ -2,41 +2,58 @@ import _ from 'lodash'
 import Brng from 'brng'
 
 import fb from './fb'
+import determineTeamSizes from './determineTeamSizes'
 import { PROFESSIONS } from '../util/professions'
 
 // writes to playersState
 function assignTeamsAndProfessions (playersState) {
 
-  // shuffle team assignments
   const numberOfPlayers = _.size(playersState)
-  const numberOnBadTeam = Math.round(numberOfPlayers * 0.4)
-  const numberOnGoodTeam = numberOfPlayers - numberOnBadTeam
+
+  const {
+    numberOnGoodTeam,
+    numberOnBadTeam,
+    numberOfHeretics
+  } = determineTeamSizes(numberOfPlayers)
+
   const assignedTeams = _.shuffle(
     _.times(numberOnBadTeam, _.constant('BAD'))
       .concat(_.times(numberOnGoodTeam, _.constant('GOOD')))
+      .concat(_.times(numberOfHeretics, _.constant('HERETIC')))
   )
+
+  // filter professions based on number of players
+  const filteredProfessions = _.pickBy(PROFESSIONS, (professionObj) => {
+    if (professionObj.minimumNumberOfPlayers) {
+      return professionObj.minimumNumberOfPlayers <= numberOfPlayers
+    }
+    else {
+      return true
+    }
+  })
 
   // setup profession pickers
   const defaultProfessionTypeProportions = {TANK: 3, ASSASSIN: 3, SUPPORT: 3, SPECIAL: 1}
   const badProfessionTypePicker = new Brng(defaultProfessionTypeProportions, {bias: 1.5})
   const goodProfessionTypePicker = new Brng(defaultProfessionTypeProportions, {bias: 1.5})
+  const hereticProfessionTypePicker = new Brng(defaultProfessionTypeProportions, {bias: 2})
 
   const return1 = _.constant(1)
   const defaultConfig = {repeatTolerance: 0, bias: 1.5}
   const tankProfessionPicker = new Brng(
-    _.chain(PROFESSIONS).pickBy({type: 'TANK'}).mapValues(return1).valueOf(),
+    _.chain(filteredProfessions).pickBy({type: 'TANK'}).mapValues(return1).valueOf(),
     defaultConfig
   )
   const assassinProfessionPicker = new Brng(
-    _.chain(PROFESSIONS).pickBy({type: 'ASSASSIN'}).mapValues(return1).valueOf(),
+    _.chain(filteredProfessions).pickBy({type: 'ASSASSIN'}).mapValues(return1).valueOf(),
     defaultConfig
   )
   const supportProfessionPicker = new Brng(
-    _.chain(PROFESSIONS).pickBy({type: 'SUPPORT'}).mapValues(return1).valueOf(),
+    _.chain(filteredProfessions).pickBy({type: 'SUPPORT'}).mapValues(return1).valueOf(),
     defaultConfig
   )
   const specialProfessionPicker = new Brng(
-    _.chain(PROFESSIONS).pickBy({type: 'SPECIAL'}).mapValues(return1).valueOf(),
+    _.chain(filteredProfessions).pickBy({type: 'SPECIAL'}).mapValues(return1).valueOf(),
     defaultConfig
   )
   const professionTypeMapping = {
@@ -46,6 +63,7 @@ function assignTeamsAndProfessions (playersState) {
     SPECIAL: specialProfessionPicker
   }
 
+  // assign a team and profession choices to each player
   let index = -1
   _.forEach(playersState, (playerObj, playerId) => {
     index++
@@ -57,6 +75,9 @@ function assignTeamsAndProfessions (playersState) {
     }
     else if (playerTeam === 'GOOD') {
       playerProfessionTypes = [goodProfessionTypePicker.pick(), goodProfessionTypePicker.pick()]
+    }
+    else if (playerTeam === 'HERETIC') {
+      playerProfessionTypes = [hereticProfessionTypePicker.pick(), hereticProfessionTypePicker.pick()]
     }
 
     const playerProfessionChoices = _.map(playerProfessionTypes, (professionType) => {

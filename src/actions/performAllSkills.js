@@ -75,20 +75,30 @@ export default async function performAllSkills () {
   const playersStateValues = _.values(newPlayersState)
   const badTeam = _.filter(playersStateValues, {team: 'BAD'})
   const goodTeam = _.filter(playersStateValues, {team: 'GOOD'})
+  const hereticTeam = _.filter(playersStateValues, {team: 'HERETIC'})
 
   const isBadTeamAllDead = badTeam.length === _.filter(badTeam, (playerObj) => playerObj.health <= 0).length
   const isGoodTeamAllDead = goodTeam.length === _.filter(goodTeam, (playerObj) => playerObj.health <= 0).length
+  const isHereticAlive = hereticTeam.length === _.filter(hereticTeam, (playerObj) => playerObj.health > 0).length
 
-  if (isBadTeamAllDead || isGoodTeamAllDead) { // GAME OVER
+  const goodTeamVictory = !isGoodTeamAllDead && isBadTeamAllDead && !isHereticAlive
+  const badTeamVictory = isGoodTeamAllDead && !isBadTeamAllDead && !isHereticAlive
+  const hereticVictory = isGoodTeamAllDead && isBadTeamAllDead && isHereticAlive
+  const tieGame = isGoodTeamAllDead && isBadTeamAllDead && !isHereticAlive
+
+  if (goodTeamVictory || badTeamVictory || hereticVictory || tieGame) { // GAME OVER
     fb('meta/time/end').set((new Date()).toString()) // log when the game ends
-    if (isBadTeamAllDead && isGoodTeamAllDead) {
-      fb('status').set('TIE_VICTORY')
-    }
-    else if (isBadTeamAllDead) {
+    if (goodTeamVictory) {
       fb('status').set('GOOD_VICTORY')
     }
-    else if (isGoodTeamAllDead) {
+    else if (badTeamVictory) {
       fb('status').set('BAD_VICTORY')
+    }
+    else if (hereticVictory) {
+      fb('status').set('HERETIC_VICTORY')
+    }
+    else if (tieGame) {
+      fb('status').set('TIE_VICTORY')
     }
   }
   else {

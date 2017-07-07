@@ -7,7 +7,8 @@ import ReceivedMessages from './ReceivedMessages'
 
 const TEAM_NAMES = {
   BAD: 'Evil Hitmen -- eliminate the rebel forces',
-  GOOD: 'Good Rebel Forces -- defend against the secret hitmen among you'
+  GOOD: 'Good Rebel Forces -- defend against the secret hitmen among you',
+  HERETIC: 'Heretic -- eliminate everyone, be the last one alive'
 }
 
 class PlayerInfo extends Component {

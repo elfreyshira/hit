@@ -10,25 +10,37 @@ import WaitingBlock from '../WaitingBlock'
 
 const TEAM_NAMES = {
   BAD: 'Evil Hitmen -- eliminate the rebel forces',
-  GOOD: 'Good Rebel Forces -- defend against the secret hitmen among you'
+  GOOD: 'Good Rebel Forces -- defend against the secret hitmen among you',
+  HERETIC: 'Heretic -- eliminate everyone, be the last one alive'
 }
 
 class ChooseProfession extends Component {
 
   static propTypes = {
-    // onJoinGame: React.PropTypes.func,
     // appState: React.PropTypes.object
   }
-
-  // state = {
-  //   shouldHideButton: false
-  // }
 
   onChooseProfession = (professionId) => {
     actions.chooseProfession({
       player: this.props.appState.player,
       profession: professionId
     })
+  }
+
+  renderTeamSplit = () => {
+    const badTeamCount = _.filter(this.props.appState.gameState.players, {team: 'BAD'}).length
+    const goodTeamCount = _.filter(this.props.appState.gameState.players, {team: 'GOOD'}).length
+    const hereticCount = _.filter(this.props.appState.gameState.players, {team: 'HERETIC'}).length
+    return (
+      <div>
+        Number of players on each team:
+        <ul>
+          <li>Good: {goodTeamCount}</li>
+          <li>Bad: {badTeamCount}</li>
+          {hereticCount ? <li>Heretic: {hereticCount}</li> : null}
+        </ul>
+      </div>
+    )
   }
 
   render () {
@@ -43,6 +55,7 @@ class ChooseProfession extends Component {
       return (
         <div>
           <h3>Team: {TEAM_NAMES[this.props.appState.gameState.players[playerId].team]}</h3>
+          {this.renderTeamSplit()}
           <h2>Choose a Profession</h2>
           <hr/>
 
