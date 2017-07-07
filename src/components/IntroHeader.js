@@ -30,6 +30,7 @@ class IntroHeader extends Component {
             {window.location.href}
           </span>
         </h4>
+        <h6><a target="_blank" href="https://goo.gl/forms/NQndeKMs9VmIHmUv1">Got feedback?</a></h6>
       </div>
     );
   }

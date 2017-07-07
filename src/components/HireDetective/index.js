@@ -162,33 +162,56 @@ class HireDetective extends Component {
       else if (detective === 'intent') {
         const currentTurn = this.props.appState.gameState.turns.currentTurn
 
-        const turnObj = _.find(
-          this.props.appState.gameState.turns['turn' + (currentTurn-1)],
-          {player: target}
-        )
+        const skillsLastTurn = _.chain(this.props.appState.gameState.turns['turn' + (currentTurn-1)])
+          .values()
+          .filter({player: target})
+          .valueOf()
 
-        const skillTargetPlayerObj = this.props.appState.gameState.players[turnObj.target]
-        let skillTargetName = ''
-        if (skillTargetPlayerObj) {
-          skillTargetName = skillTargetPlayerObj.name
+        const skillsPlayerDid = _.map(skillsLastTurn, (skillObj) => {
+          const skillTargetPlayerObj = this.props.appState.gameState.players[skillObj.target]
+          let skillTargetName = ''
+          if (skillTargetPlayerObj) {
+            skillTargetName = skillTargetPlayerObj.name
+          }
+
+          let skillIntention
+          if (SKILLS[skillObj.skill].type === 'ATTACK') {
+            skillIntention = 'attack'
+          }
+          else if (SKILLS[skillObj.skill].type === 'SUPPORT') {
+            skillIntention = 'support'
+          }
+          else if (SKILLS[skillObj.skill].type === 'INNOCENT') {
+            skillIntention = `defecate in the toilet but missed`
+            // for multi-turn skills, there'll still be a target in the obj, but we want to ignore it
+            skillTargetName = ''
+          }
+          return (
+            <span>
+              {skillIntention} {skillTargetName}
+            </span>
+          )
+        })
+
+        const baseText = <span>In turn {currentTurn-1}, {targetName} attempted to</span>
+        if (skillsPlayerDid.length > 1) {
+          investigationText = (
+            <div>
+              {baseText}:
+              <ul>
+                {_.map(skillsPlayerDid, (text, index) => <li key={text + index}>{text}</li>)}
+              </ul>
+            </div>
+          )
+        }
+        else {
+          investigationText = (
+            <div>
+              {baseText} {skillsPlayerDid}
+            </div>
+          )
         }
 
-        let skillIntention
-        if (SKILLS[turnObj.skill].type === 'ATTACK') {
-          skillIntention = 'attack'
-        }
-        else if (SKILLS[turnObj.skill].type === 'SUPPORT') {
-          skillIntention = 'support'
-        }
-        else if (SKILLS[turnObj.skill].type === 'INNOCENT') {
-          skillIntention = `defecate in the toilet but missed`
-        }
-
-        investigationText = (
-          <span>
-            In turn {currentTurn-1}, {targetName} attempted to {skillIntention} {skillTargetName}
-          </span>
-        )
       }
       else if (detective === 'money') {
         const targetMoney = this.props.appState.gameState.players[target].money

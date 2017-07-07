@@ -22,7 +22,7 @@ class ChooseSkill extends Component {
   }
 
   onChooseSkill = (skillId, skillName) => {
-    if (_.startsWith(skillId, 'DO')) {
+    if (SKILLS[skillId].noTargetSelect === true) {
       // if the skill requires no target, skip the targeting phase
       this.queueSkill(skillId)
       return
@@ -51,6 +51,7 @@ class ChooseSkill extends Component {
 
     const playerAlreadyDone = _.chain(this.props.appState.gameState.turns['turn' + currentTurn])
       .values()
+      .filter({fromTurn: currentTurn})
       .map('player')
       .includes(this.props.appState.player)
       .valueOf()

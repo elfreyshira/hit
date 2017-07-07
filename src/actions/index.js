@@ -2,7 +2,7 @@ import firebase from 'firebase'
 import _ from 'lodash'
 
 import getRoomID from '../util/getRoomID'
-import { PROFESSIONS } from '../util/professions'
+import { PROFESSIONS, SKILLS } from '../util/professions'
 
 import fb from './fb'
 import startGame from './startGame'
@@ -63,12 +63,21 @@ async function queueSkill (payload) {
     return _.isNumber(playersChosenSkill) ? playersChosenSkill + 1 : 0
   })
 
-  const skillObj = {player, skill}
+  ///// PUSH SKILL FOR CURRENT TURN ////
+  const queuedSkillObj = {player, skill, fromTurn: currentTurn}
   if (target) {
-    skillObj.target = target
+    queuedSkillObj.target = target
   }
-  await fb('turns', 'turn' + currentTurn).push(skillObj)
+  await fb('turns', 'turn' + currentTurn).push(queuedSkillObj)
 
+  ///// PUSH SKILLS FOR FUTURE TURNS ////
+  _.forEach(SKILLS[skill].multiTurn, (futureSkillId, index) => {
+    const turnSkillIsActivated = currentTurn + index + 1
+    const futureSkillObj = _.merge({}, queuedSkillObj, {skill: futureSkillId})
+    fb('turns', 'turn' + turnSkillIsActivated).push(futureSkillObj) // no need to await
+  })
+
+  ///// CHECK IF ALL PLAYERS HAVE CHOSEN A SKILL //////
   const {playersAlive, playersChosenSkill} = (await fb('meta/turn').once('value')).val()
   if (playersAlive === playersChosenSkill) {
     performAllSkills()

@@ -5,6 +5,13 @@
 import _ from 'lodash'
 
 export const PROFESSIONS = _.mapValues({
+
+  //////////////////////////
+  /*************************/
+  /////  TANK /////////////
+  /*************************/
+  //////////////////////////
+
   TANK_HEALTH: {
     name: 'Tankilicious',
     quote: "ME TANK. YOU HIT.",
@@ -72,6 +79,12 @@ export const PROFESSIONS = _.mapValues({
     postTurnStep: 'HEAL_BY_3'
   },
 
+  //////////////////////////
+  /*************************/
+  /////  ASSASSIN ///////////
+  /*************************/
+  //////////////////////////
+
   ASSASSIN_NORMAL_LOW: {
     name: 'Ninjamaican me crazy',
     quote: `Ayy, I'm killin' here!`,
@@ -101,6 +114,52 @@ export const PROFESSIONS = _.mapValues({
     startingHealth: 14,
     possibleSkills: ['HIT_SACRIFICE_4']
   },
+
+  ASSASSIN_DELAYED_3: {
+    name: 'Time Wizard',
+    quote: `Yay`,
+    description: `You can delay a 3-damage hit for the following turn.`,
+
+    type: 'ASSASSIN',
+    startingHealth: 13,
+    possibleSkills: ['DO_HIT_3_NEXT_TURN']
+  },
+
+  ASSASSIN_DELAYED_4: {
+    name: 'Thousand Dragon',
+    quote: `Time to mess you up... tomorrow.`,
+    description: `You can delay a 4-damage hit for the following turn.`,
+
+    type: 'ASSASSIN',
+    startingHealth: 10,
+    possibleSkills: ['DO_HIT_4_NEXT_TURN']
+  },
+
+  ASSASSIN_SPREAD_3: {
+    name: 'Dance Dance Threevolution',
+    quote: `Dance monkey, dance.`,
+    description: `You can hit somebody 3 consecutive turns for 1 damage each turn.`,
+
+    type: 'ASSASSIN',
+    startingHealth: 13,
+    possibleSkills: ['HIT_SPREAD_3_DAMAGE_1']
+  },
+
+  ASSASSIN_SPREAD_4: {
+    name: 'Peanut Butter Jelly Time',
+    quote: `Spread it nice and easy.`,
+    description: `You can hit somebody 4 consecutive turns for 1 damage each turn.`,
+
+    type: 'ASSASSIN',
+    startingHealth: 10,
+    possibleSkills: ['HIT_SPREAD_4_DAMAGE_1']
+  },
+
+  //////////////////////////
+  /*************************/
+  /////  SUPPORT ///////////
+  /*************************/
+  //////////////////////////
 
   SUPPORT_HEAL_NORMAL_LOW: {
     name: 'Rick Astley',
@@ -141,6 +200,32 @@ export const PROFESSIONS = _.mapValues({
     startingHealth: 15,
     possibleSkills: ['SUPPORT_HEAL_SACRIFICE_4']
   },
+
+  SUPPORT_HEAL_SPREAD_3: {
+    name: 'Pre-Glacier Titanic',
+    quote: `Slow and steady and lovely`,
+    description: `You can heal somebody 3 consecutive turns for 1 health each turn.`,
+
+    type: 'SUPPORT',
+    startingHealth: 15,
+    possibleSkills: ['HEAL_SPREAD_3_HEALTH_1']
+  },
+
+  SUPPORT_HEAL_SPREAD_4: {
+    name: 'Rick Astley On Repeat Rick Astley On Repeat',
+    quote: `Never gonna never gonna never gonna give you up`,
+    description: `You can heal somebody 4 consecutive turns for 1 health each turn.`,
+
+    type: 'SUPPORT',
+    startingHealth: 12,
+    possibleSkills: ['HEAL_SPREAD_4_HEALTH_1']
+  },
+
+  //////////////////////////
+  /*************************/
+  /////  SPECIAL ///////////
+  /*************************/
+  //////////////////////////
 
   SPECIAL_WEALTH_HIGH: {
     name: 'Seto Kaiba',
@@ -183,7 +268,7 @@ export const PROFESSIONS = _.mapValues({
 })
 
 
-function createHitSkillObj (hitAmount) {
+function createHitSkill (hitAmount) {
   return {
     name: 'Hit for ' + hitAmount + ' damage.',
     step: 'HIT',
@@ -195,7 +280,7 @@ function createHitSkillObj (hitAmount) {
   }
 }
 
-function createHitSacrificeSkillObj (hitAmount) {
+function createHitSacrificeSkill (hitAmount) {
   return {
     name: 'Hit for ' + hitAmount + ' damage, lose ' + (hitAmount - 3) + ' health.',
     step: 'HIT',
@@ -209,7 +294,7 @@ function createHitSacrificeSkillObj (hitAmount) {
   }
 }
 
-function createHealSkillObj (healAmount) {
+function createHealSkill (healAmount) {
   return {
     name: 'Heal for ' + healAmount + ' health.',
     step: 'HEAL',
@@ -223,7 +308,7 @@ function createHealSkillObj (healAmount) {
   }
 }
 
-function createHealSacrificeSkillObj (healAmount) {
+function createHealSacrificeSkill (healAmount) {
   return {
     name: 'Heal for ' + healAmount + ' health, lose ' + (healAmount - 3) + ' health.',
     step: 'HEAL',
@@ -238,15 +323,46 @@ function createHealSacrificeSkillObj (healAmount) {
   }
 }
 
-function createGainMoneyObj (moneyAmount) {
+function createGainMoney (moneyAmount) {
   return {
     name: 'Gain $' + moneyAmount + '.',
     step: 'NO_TARGET',
     type: 'INNOCENT',
+    noTargetSelect: true,
     doSkill (playersState, payload) {
       const {player, target} = payload
       playersState[player].money = playersState[player].money + moneyAmount
     }
+  }
+}
+
+function createHitNextTurn (hitAmount, nextTurnSkill) {
+  return {
+    name: 'Hit for ' + hitAmount + ' damage next turn.',
+    step: 'NO_TARGET',
+    type: 'INNOCENT',
+    doSkill: _.noop,
+    multiTurn: [nextTurnSkill]
+  }
+}
+
+function createHitSpread (turnLength, damagePerTurn, skillEachTurn) {
+  return {
+    name: 'Hit ' + turnLength + ' consecutive turns for ' + damagePerTurn + ' damage each turn.',
+    step: 'HIT',
+    type: 'ATTACK',
+    doSkill: createHitSkill(damagePerTurn).doSkill,
+    multiTurn: _.times(turnLength - 1, _.constant(skillEachTurn))
+  }
+}
+
+function createHealSpread (turnLength, healthPerTurn, skillEachTurn) {
+  return {
+    name: 'Heal ' + turnLength + ' consecutive turns for ' + healthPerTurn + ' health each turn.',
+    step: 'HEAL',
+    type: 'SUPPORT',
+    doSkill: createHealSkill(healthPerTurn).doSkill,
+    multiTurn: _.times(turnLength - 1, _.constant(skillEachTurn))
   }
 }
 
@@ -255,6 +371,7 @@ export const SKILLS = {
     name: "Do nothing and gain $7.",
     step: 'NO_TARGET',
     type: 'INNOCENT',
+    noTargetSelect: true,
     doSkill (playersState, payload) {
       const {player, target} = payload
       playersState[player].money = playersState[player].money + 7
@@ -275,22 +392,31 @@ export const SKILLS = {
     name: 'Heal yourself for 2 health',
     step: 'NO_TARGET',
     type: 'INNOCENT',
+    noTargetSelect: true,
     doSkill (playersState, payload) {
       const {player, target} = payload
       const maxHealth = playersState[player].maxHealth
       playersState[player].health = Math.min(playersState[player].health + 2, maxHealth)
     }
   },
-  HIT_2: createHitSkillObj(2),
-  HIT_3: createHitSkillObj(3),
-  HIT_4: createHitSkillObj(4),
-  SUPPORT_HEAL_2: createHealSkillObj(2),
-  SUPPORT_HEAL_3: createHealSkillObj(3),
-  SUPPORT_HEAL_4: createHealSkillObj(4),
-  HIT_SACRIFICE_4: createHitSacrificeSkillObj(4),
-  SUPPORT_HEAL_SACRIFICE_4: createHealSacrificeSkillObj(4),
-  DO_GAIN_15: createGainMoneyObj(15),
-  DO_GAIN_20: createGainMoneyObj(20)
+  HIT_1: createHitSkill(1),
+  HIT_2: createHitSkill(2),
+  HIT_3: createHitSkill(3),
+  HIT_4: createHitSkill(4),
+  SUPPORT_HEAL_1: createHealSkill(1),
+  SUPPORT_HEAL_2: createHealSkill(2),
+  SUPPORT_HEAL_3: createHealSkill(3),
+  SUPPORT_HEAL_4: createHealSkill(4),
+  HIT_SACRIFICE_4: createHitSacrificeSkill(4),
+  SUPPORT_HEAL_SACRIFICE_4: createHealSacrificeSkill(4),
+  DO_GAIN_15: createGainMoney(15),
+  DO_GAIN_20: createGainMoney(20),
+  DO_HIT_3_NEXT_TURN: createHitNextTurn(3, 'HIT_3'),
+  DO_HIT_4_NEXT_TURN: createHitNextTurn(4, 'HIT_4'),
+  HIT_SPREAD_3_DAMAGE_1: createHitSpread(3, 1, 'HIT_1'),
+  HIT_SPREAD_4_DAMAGE_1: createHitSpread(4, 1, 'HIT_1'),
+  HEAL_SPREAD_3_HEALTH_1: createHealSpread(3, 1, 'SUPPORT_HEAL_1'),
+  HEAL_SPREAD_4_HEALTH_1: createHealSpread(4, 1, 'SUPPORT_HEAL_1'),
 }
 
 // all of these functions write to newPlayersState
