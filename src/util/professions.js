@@ -141,7 +141,7 @@ export const PROFESSIONS = _.mapValues({
     description: `You can hit somebody 3 consecutive turns for 1 damage each turn.`,
 
     type: 'ASSASSIN',
-    startingHealth: 13,
+    startingHealth: 14,
     possibleSkills: ['HIT_SPREAD_3_DAMAGE_1']
   },
 
@@ -151,7 +151,7 @@ export const PROFESSIONS = _.mapValues({
     description: `You can hit somebody 4 consecutive turns for 1 damage each turn.`,
 
     type: 'ASSASSIN',
-    startingHealth: 10,
+    startingHealth: 11,
     possibleSkills: ['HIT_SPREAD_4_DAMAGE_1']
   },
 
@@ -202,7 +202,7 @@ export const PROFESSIONS = _.mapValues({
   },
 
   SUPPORT_HEAL_SPREAD_3: {
-    name: 'Pre-Glacier Titanic',
+    name: 'Pre-Iceberg Titanic',
     quote: `Slow and steady and lovely`,
     description: `You can heal somebody 3 consecutive turns for 1 health each turn.`,
 
