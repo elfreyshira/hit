@@ -13,7 +13,7 @@ import SendMessage from '../SendMessage'
 class ChooseSkill extends Component {
 
   static propTypes = {
-    appState: React.PropTypes.object
+    // appState: React.PropTypes.object
   }
 
   state = {
@@ -84,7 +84,6 @@ class ChooseSkill extends Component {
   }
 
   onChooseDifferentSkill = (evt) => {
-    evt.preventDefault()
     this.setState({chosenSkillId: null})
   }
   shuffleTargets = _.once(_.shuffle)
@@ -116,7 +115,7 @@ class ChooseSkill extends Component {
           <h5>
             Skill chosen: {this.state.chosenSkillName}
             <br />
-            <a href="#" onClick={this.onChooseDifferentSkill}>[choose different skill]</a>
+            <a href="javascript:void(0)" onClick={this.onChooseDifferentSkill}>[choose different skill]</a>
           </h5>
           <h4>[Turn {currentTurn}] Select a target:</h4>
           {targetButtons}

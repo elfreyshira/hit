@@ -9,8 +9,8 @@ import IntroHeader from '../IntroHeader'
 class Lobby extends Component {
 
   static propTypes = {
-    onJoinGame: React.PropTypes.func,
-    appState: React.PropTypes.object
+    // onJoinGame: React.PropTypes.func,
+    // appState: React.PropTypes.object
   }
 
   state = {
