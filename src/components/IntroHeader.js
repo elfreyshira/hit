@@ -44,10 +44,11 @@ class IntroHeader extends Component {
         <ul>
           <li>Goal of the game: be the team that wins by eliminating everybody else.</li>
           <li>You'll be assigned to one of 3 teams: evil hitmen, good rebel forces, or heretic.</li>
-          <li>You choose between 2 professions, with different actions and skills.</li>
+          <li>There are a variety of professions, with different actions and skills.</li>
           <li>Each turn, all players must make simultaneous moves.</li>
           <li>If you have 0 health at the end of a turn, you are eliminated.</li>
-          <li>You can hire detectives to discover information about others.</li>
+          <li>Hire detectives to discover information about others.</li>
+          <li>Send private messages to others to ask for help or to team up.</li>
           <li>DO NOT EVER show anybody your device. It ruins the game.</li>
         </ul>
         {this.renderShareUrl()}
