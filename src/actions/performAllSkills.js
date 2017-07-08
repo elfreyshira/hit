@@ -99,12 +99,14 @@ export default async function performAllSkills () {
 
   const isBadTeamAllDead = badTeam.length === _.filter(badTeam, (playerObj) => playerObj.health <= 0).length
   const isGoodTeamAllDead = goodTeam.length === _.filter(goodTeam, (playerObj) => playerObj.health <= 0).length
-  const isHereticAlive = hereticTeam.length === _.filter(hereticTeam, (playerObj) => playerObj.health > 0).length
 
-  const goodTeamVictory = !isGoodTeamAllDead && isBadTeamAllDead && !isHereticAlive
-  const badTeamVictory = isGoodTeamAllDead && !isBadTeamAllDead && !isHereticAlive
-  const hereticVictory = isGoodTeamAllDead && isBadTeamAllDead && isHereticAlive
-  const tieGame = isGoodTeamAllDead && isBadTeamAllDead && !isHereticAlive
+  const isHereticDead = !hereticTeam.length ? true : // if no heretic in the game, then he dead
+    hereticTeam.length === _.filter(hereticTeam, (playerObj) => playerObj.health <= 0).length
+
+  const goodTeamVictory = !isGoodTeamAllDead && isBadTeamAllDead && isHereticDead
+  const badTeamVictory = isGoodTeamAllDead && !isBadTeamAllDead && isHereticDead
+  const hereticVictory = isGoodTeamAllDead && isBadTeamAllDead && !isHereticDead
+  const tieGame = isGoodTeamAllDead && isBadTeamAllDead && isHereticDead
 
   if (goodTeamVictory || badTeamVictory || hereticVictory || tieGame) { // GAME OVER
     fb('meta/time/end').set((new Date()).toString()) // log when the game ends

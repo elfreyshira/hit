@@ -95,28 +95,30 @@ export default async function startGame () {
 
   assignTeamsAndProfessions(playersState) // write to playersState
 
-  await fb('meta').set({
-    turn: {
-      playersAlive: _.size(playersState),
-      playersChosenSkill: 0,
-      playersReviewedTurn: 0,
-      playersChosenProfession: 0
-    },
-    time: {
-      start: (new Date()).toString()
-    }
-  })
+  await Promise.all([
+    fb('meta').set({
+      turn: {
+        playersAlive: _.size(playersState),
+        playersChosenSkill: 0,
+        playersReviewedTurn: 0,
+        playersChosenProfession: 0
+      },
+      time: {
+        start: (new Date()).toString()
+      }
+    }),
 
-  await fb('detectives/cost').set({
-    health: 30,
-    intent: 38,
-    profession: 30,
-    money: 20,
-    team: 150
-  })
+    fb('detectives/cost').set({
+      health: 30,
+      intent: 38,
+      profession: 30,
+      money: 20,
+      team: 150
+    }),
 
-  await fb('turns/currentTurn').set(1)
+    fb('turns/currentTurn').set(1),
+    fb('players').update(playersState)
+  ])
 
-  await fb('players').update(playersState)
   await fb('status').set('CHOOSE_PROFESSION')
 }

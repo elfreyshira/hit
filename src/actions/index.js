@@ -117,9 +117,12 @@ async function createNewGame () {
   window.location.search = 'room=' + newRoomID //+ '&first=true';
 }
 
+const debouncedCallback = _.throttle((callback, snapshotValue) => {
+  callback(snapshotValue)
+}, 208)
 function onGameStateChange (callback) {
   fb().on('value', (snapshot) => {
-    callback(snapshot.val())
+    debouncedCallback(callback, snapshot.val())
   })
 }
 
@@ -147,18 +150,20 @@ async function hireDetective (payload) {
 async function chooseProfession (payload) {
   const {player, profession} = payload
 
-  await fb('players', player, 'professionChoices').remove()
   const playerObj = {
     profession,
     health: PROFESSIONS[profession].startingHealth,
     maxHealth: PROFESSIONS[profession].startingHealth,
     money: PROFESSIONS[profession].startingMoney || 100, // default starting money of 100
   }
-  await fb('players', player).update(playerObj)
 
-  await fb('meta/turn/playersChosenProfession').transaction((playersChosenProfession) => {
-    return _.isNumber(playersChosenProfession) ? playersChosenProfession + 1 : 0
-  })
+  await Promise.all([
+    fb('meta/turn/playersChosenProfession').transaction((playersChosenProfession) => {
+      return _.isNumber(playersChosenProfession) ? playersChosenProfession + 1 : 0
+    }),
+    fb('players', player, 'professionChoices').remove(),
+    fb('players', player).update(playerObj)
+  ])
 
   const {playersAlive, playersChosenProfession} = (await fb('meta/turn').once('value')).val()
   if (playersAlive === playersChosenProfession) {

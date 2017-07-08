@@ -83,7 +83,7 @@ class HireDetective extends Component {
 
   onChooseTarget = async (targetId) => {
     this.setState({shouldHideButton: true})
-    await actions.hireDetective({
+    actions.hireDetective({
       player: this.props.appState.player,
       target: targetId, // don't need to log target
       detective: this.state.chosenDetective,
