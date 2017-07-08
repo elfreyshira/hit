@@ -1,6 +1,15 @@
 import React, { Component } from 'react'
 import getRoomID from '../util/getRoomID'
 
+
+const shareUrlStyle = {
+  padding: '1px 5px',
+  marginLeft: '3px',
+  border: '1px solid rgba(0,0,0,.3)',
+  userSelect: 'all',
+  lineHeight: '1.6'
+}
+
 class IntroHeader extends Component {
 
   static propTypes = {
@@ -13,7 +22,7 @@ class IntroHeader extends Component {
           Send the browser url to invite more friends:
           <span
             ref="text"
-            style={{padding: '1px 5px', marginLeft: '3px', border: '1px solid rgba(0,0,0,.3)', userSelect: 'all'}}
+            style={shareUrlStyle}
           >
             {window.location.href}
           </span>
