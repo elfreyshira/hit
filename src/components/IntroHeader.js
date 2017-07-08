@@ -52,6 +52,7 @@ class IntroHeader extends Component {
           <li>DO NOT EVER show anybody your device. It ruins the game.</li>
         </ul>
         {this.renderShareUrl()}
+        <h4>View all professions: <a href="/professions">elfreyshira.com/professions</a></h4>
         <h6>
           <a
             target="_blank"
