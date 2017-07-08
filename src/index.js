@@ -10,7 +10,7 @@ function ListOfProfessions () {
   return (
     <div>
       <h1>All professions from Hit</h1>
-      <span><a href="/">Play the game</a></span>
+      <span><a href="..">Play the game</a></span>
       <hr />
       <hr />
       {_.shuffle(_.map(PROFESSIONS, (professionObj, professionId) => {

@@ -35,7 +35,7 @@ export const PROFESSIONS = _.mapValues({
   TANK_ARMOR: {
     name: 'Duke Devlin',
     quote: 'Ow that barely hurt.',
-    description: `Each turn, you cannot received more than 2 damage.`,
+    description: `Each turn, you cannot receive more than 2 damage.`,
 
     type: 'TANK',
     startingHealth: 12,
@@ -250,7 +250,7 @@ export const PROFESSIONS = _.mapValues({
   SPECIAL_WEALTH_HIGH: {
     name: 'Seto Kaiba',
     quote: `Screw the rules, I've got money.`,
-    description: `You can gain $20.`,
+    description: `You can gain $20 in a turn.`,
 
     type: 'SPECIAL',
     startingHealth: 10,
@@ -260,7 +260,7 @@ export const PROFESSIONS = _.mapValues({
   SPECIAL_WEALTH_MED: {
     name: 'Snoop Dawg',
     quote: `If the ride is more fly, then you must buy.`,
-    description: `You can gain $15.`,
+    description: `You can gain $15 in a turn.`,
 
     type: 'SPECIAL',
     startingHealth: 15,

@@ -42,8 +42,9 @@ class IntroHeader extends Component {
         <hr/>
         <h4>Rules</h4>
         <ul>
-          <li>Goal of the game: be the team that wins by eliminating everybody else.</li>
-          <li>You'll be assigned to one of 3 teams: evil hitmen, good rebel forces, or heretic.</li>
+          <li>Goal of the game: be the team that wins by being the last team standing.</li>
+          <li>You'll be assigned to one of 2 teams: evil hitmen or good rebel forces.</li>
+          <li>Some games might have a heretic, a one-person team that wins by being the last one alive.</li>
           <li>There are a variety of professions, with different actions and skills.</li>
           <li>Each turn, all players must make simultaneous moves.</li>
           <li>If you have 0 health at the end of a turn, you are eliminated.</li>
@@ -52,7 +53,7 @@ class IntroHeader extends Component {
           <li>DO NOT EVER show anybody your device. It ruins the game.</li>
         </ul>
         {this.renderShareUrl()}
-        <h4>View all professions: <a href="/professions">elfreyshira.com/professions</a></h4>
+        <h4>View all professions: <a href="professions">elfreyshira.com/hit/professions</a></h4>
         <h6>
           <a
             target="_blank"
