@@ -253,7 +253,7 @@ export const PROFESSIONS = _.mapValues({
     description: `You can gain $20 in a turn.`,
 
     type: 'SPECIAL',
-    startingHealth: 10,
+    startingHealth: 11,
     possibleSkills: ['DO_GAIN_20']
   },
 
@@ -273,7 +273,7 @@ export const PROFESSIONS = _.mapValues({
     description: `You passively gain $8 per turn.`,
 
     type: 'SPECIAL',
-    startingHealth: 11,
+    startingHealth: 12,
     possibleSkills: [],
     postTurnStep: 'MONEY_GAINED_8'
   },

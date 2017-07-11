@@ -12,7 +12,7 @@
     animation-timing-function: step-end;
     -webkit-animation-timing-function: step-end;
   }
-  50% {
+  60% {
     position: initial;
     font-size: initial;
     height: initial;
@@ -25,23 +25,23 @@
     animation-timing-function: step-end;
     -webkit-animation-timing-function: step-end;
   }
-  60% {
+  65% {
     background-color: rgba(250, 170, 89, 0.95);
     animation-timing-function: linear;
     -webkit-animation-timing-function: linear;
   }
-  70% {
-    background-color: rgba(255, 255, 255, 0.95);
+  75% {
+    background-color: rgb(255, 255, 255);
     animation-timing-function: linear;
     -webkit-animation-timing-function: linear;
   }
-  80% {
+  85% {
     background-color: rgba(250, 170, 89, 0.95);
     animation-timing-function: linear;
     -webkit-animation-timing-function: linear;
   }
-  90% {
-    background-color: rgba(255, 255, 255, 0.95);
+  95% {
+    background-color: rgb(255, 255, 255);
     animation-timing-function: linear;
     -webkit-animation-timing-function: linear;
   }
@@ -54,7 +54,7 @@
 
 .new-message-item-enter {
   animation-name: flashMessage;
-  animation-duration: 2.5s;
+  animation-duration: 3.5s;
   -webkit-animation-name: flashMessage;
-  -webkit-animation-duration: 2.5s;
+  -webkit-animation-duration: 3.5s;
 }

@@ -33,13 +33,13 @@ function assignTeamsAndProfessions (playersState) {
   })
 
   // setup profession pickers
+  const defaultConfig = {repeatTolerance: 0, bias: 2}
   const defaultProfessionTypeProportions = {TANK: 3, ASSASSIN: 3, SUPPORT: 3, SPECIAL: 1}
-  const badProfessionTypePicker = new Brng(defaultProfessionTypeProportions, {bias: 1.5})
-  const goodProfessionTypePicker = new Brng(defaultProfessionTypeProportions, {bias: 1.5})
-  const hereticProfessionTypePicker = new Brng(defaultProfessionTypeProportions, {bias: 2})
+  const badProfessionTypePicker = new Brng(defaultProfessionTypeProportions, defaultConfig)
+  const goodProfessionTypePicker = new Brng(defaultProfessionTypeProportions, defaultConfig)
+  const hereticProfessionTypePicker = new Brng(defaultProfessionTypeProportions, defaultConfig)
 
   const return1 = _.constant(1)
-  const defaultConfig = {repeatTolerance: 0, bias: 1.5}
   const tankProfessionPicker = new Brng(
     _.chain(filteredProfessions).pickBy({type: 'TANK'}).mapValues(return1).valueOf(),
     defaultConfig
@@ -63,26 +63,30 @@ function assignTeamsAndProfessions (playersState) {
     SPECIAL: specialProfessionPicker
   }
 
+  // pre-emptively populate the profession choices
+  const goodTeamProfessionChoices = _.times(numberOnGoodTeam * 2,
+    () => professionTypeMapping[goodProfessionTypePicker.pick()].pick())
+  const badTeamProfessionChoices = _.times(numberOnBadTeam * 2,
+    () => professionTypeMapping[badProfessionTypePicker.pick()].pick())
+  const hereticTeamProfessionChoices = _.times(numberOfHeretics * 2,
+    () => professionTypeMapping[hereticProfessionTypePicker.pick()].pick())
+
   // assign a team and profession choices to each player
   let index = -1
   _.forEach(playersState, (playerObj, playerId) => {
     index++
 
     const playerTeam = assignedTeams[index]
-    let playerProfessionTypes
+    let playerProfessionChoices
     if (playerTeam === 'BAD') {
-      playerProfessionTypes = [badProfessionTypePicker.pick(), badProfessionTypePicker.pick()]
+      playerProfessionChoices = _.times(2, () => badTeamProfessionChoices.pop())
     }
     else if (playerTeam === 'GOOD') {
-      playerProfessionTypes = [goodProfessionTypePicker.pick(), goodProfessionTypePicker.pick()]
+      playerProfessionChoices = _.times(2, () => goodTeamProfessionChoices.pop())
     }
     else if (playerTeam === 'HERETIC') {
-      playerProfessionTypes = [hereticProfessionTypePicker.pick(), hereticProfessionTypePicker.pick()]
+      playerProfessionChoices = _.times(2, () => hereticTeamProfessionChoices.pop())
     }
-
-    const playerProfessionChoices = _.map(playerProfessionTypes, (professionType) => {
-      return professionTypeMapping[professionType].pick()
-    })
 
     playerObj.team = playerTeam
     playerObj.professionChoices = playerProfessionChoices

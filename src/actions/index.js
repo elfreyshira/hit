@@ -8,22 +8,22 @@ import fb from './fb'
 import startGame from './startGame'
 import performAllSkills from './performAllSkills'
 
-// var config = {
-//   apiKey: "AIzaSyBQhxIPIgzp236kPKFRt6AqrB69tE9I3YM",
-//   authDomain: "hit-game.firebaseapp.com",
-//   databaseURL: "https://hit-game.firebaseio.com",
-//   projectId: "hit-game",
-//   storageBucket: "hit-game.appspot.com",
-//   messagingSenderId: "529926024736"
-// }
 var config = {
-  apiKey: "AIzaSyDrkXOwfrRJ_K6UyAOzfGyVnbgAVwP9RPE",
-  authDomain: "thinkfast-41d88.firebaseapp.com",
-  databaseURL: "https://thinkfast-41d88.firebaseio.com",
-  projectId: "thinkfast-41d88",
-  storageBucket: "thinkfast-41d88.appspot.com",
-  messagingSenderId: "251919933131"
+  apiKey: "AIzaSyBQhxIPIgzp236kPKFRt6AqrB69tE9I3YM",
+  authDomain: "hit-game.firebaseapp.com",
+  databaseURL: "https://hit-game.firebaseio.com",
+  projectId: "hit-game",
+  storageBucket: "hit-game.appspot.com",
+  messagingSenderId: "529926024736"
 }
+// var config = {
+//   apiKey: "AIzaSyDrkXOwfrRJ_K6UyAOzfGyVnbgAVwP9RPE",
+//   authDomain: "thinkfast-41d88.firebaseapp.com",
+//   databaseURL: "https://thinkfast-41d88.firebaseio.com",
+//   projectId: "thinkfast-41d88",
+//   storageBucket: "thinkfast-41d88.appspot.com",
+//   messagingSenderId: "251919933131"
+// }
 firebase.initializeApp(config)
 
 
